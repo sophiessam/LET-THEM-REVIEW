@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LET THEM 6기 · 3주차 주말 복습 게임</title>
+<style>
+  :root{--green:#135c43;--green2:#2fb64a;--ink:#1f1d1a;--grey:#5b6a61;--orange:#c47a24;
+        --cardbg:#f4f3ec;--line:#e2e7dd;--ok:#2f9e5f;--no:#d9534f;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+    background:linear-gradient(160deg,#eef5ef 0%,#f7f5ee 100%);color:var(--ink);min-height:100vh;display:flex;justify-content:center;}
+  .wrap{width:100%;max-width:440px;min-height:100vh;padding:20px 18px 40px;position:relative;}
+  .brand{text-align:center;margin:8px 0 4px;font-size:13px;letter-spacing:.5px;color:var(--grey);}
+  h1{text-align:center;font-size:26px;margin:2px 0 2px;font-weight:800;}
+  h1 .lt{color:var(--green2);}
+  .sub{text-align:center;color:var(--grey);font-size:13.5px;margin-bottom:16px;}
+  .seg{display:flex;gap:6px;background:#e9efe9;border-radius:12px;padding:5px;margin-bottom:18px;}
+  .seg button{flex:1;border:none;background:transparent;border-radius:9px;padding:9px 4px;font-size:13px;font-weight:700;color:var(--grey);cursor:pointer;}
+  .seg button.on{background:#fff;color:var(--green);box-shadow:0 1px 5px rgba(19,92,67,.12);}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 20px;box-shadow:0 6px 22px rgba(19,92,67,.07);margin-bottom:16px;}
+  .btn{display:block;width:100%;border:none;border-radius:14px;padding:16px;font-size:16.5px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:transform .08s,box-shadow .15s;text-align:left;}
+  .btn:active{transform:scale(.98);}
+  .mode{background:var(--cardbg);border:1px solid var(--line);color:var(--ink);display:flex;align-items:center;gap:14px;}
+  .mode .ico{font-size:26px;width:34px;text-align:center;}
+  .mode .t{font-size:16.5px;font-weight:800;}
+  .mode .d{font-size:12.5px;color:var(--grey);font-weight:500;margin-top:2px;}
+  .primary{background:var(--green);color:#fff;text-align:center;}
+  .ghost{background:#fff;border:1px solid var(--line);color:var(--green);text-align:center;font-weight:700;}
+  .ghost.wrongbtn{color:#a8443c;border-color:#e6cfcb;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;font-size:13.5px;color:var(--grey);}
+  .pill{background:var(--cardbg);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:700;}
+  .prog{height:8px;background:#e7ece7;border-radius:99px;overflow:hidden;margin-bottom:18px;}
+  .prog>i{display:block;height:100%;background:linear-gradient(90deg,var(--green2),var(--green));width:0;transition:width .3s;}
+  .qlabel{font-size:12.5px;color:var(--orange);font-weight:800;letter-spacing:.4px;margin-bottom:8px;}
+  .q{font-size:22px;font-weight:800;line-height:1.35;margin-bottom:6px;}
+  .q.en{font-family:Georgia,"Times New Roman",serif;}
+  .qsmall{font-size:14px;color:var(--grey);margin-bottom:20px;}
+  .opt{background:var(--cardbg);border:1.5px solid var(--line);color:var(--ink);border-radius:14px;padding:15px 16px;font-size:15px;font-weight:600;text-align:left;line-height:1.4;}
+  .opt.correct{background:#e7f6ec;border-color:var(--ok);color:#1c6b3f;}
+  .opt.wrong{background:#fbecea;border-color:var(--no);color:#9c332b;}
+  .opt:disabled{opacity:1;cursor:default;}
+  .fb{text-align:center;font-weight:800;font-size:16px;min-height:24px;margin:4px 0 14px;}
+  .fb.ok{color:var(--ok);} .fb.no{color:var(--no);}
+  .reveal{background:var(--cardbg);border:1px dashed var(--line);border-radius:14px;padding:18px;text-align:center;margin-bottom:16px;}
+  .reveal .en{font-family:Georgia,serif;font-size:21px;font-weight:800;line-height:1.35;}
+  .exsrc{background:#f4f7f0;border:1px solid #dce7d6;border-left:4px solid var(--green2);border-radius:12px;padding:13px 15px;margin:0 0 10px;text-align:left;}
+  .exsrc.book{background:#fdf9f1;border-color:#eeddc4;border-left-color:var(--orange);}
+  .exsrc.plain{background:#f3f5f8;border-color:#d9e0ea;border-left-color:#7c93b5;}
+  .exsrc .exlab{font-size:11.5px;font-weight:800;color:var(--green);letter-spacing:.3px;margin-bottom:6px;}
+  .exsrc.book .exlab{color:var(--orange);}
+  .exsrc.plain .exlab{color:#4d6591;}
+  .exsrc .ensent{font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.42;margin-bottom:4px;}
+  .exsrc .kosent{font-size:13px;color:var(--grey);line-height:1.45;}
+  .hidden{display:none!important;}
+  .selfrow{display:flex;gap:12px;} .selfrow .btn{margin-bottom:0;}
+  .sok{background:var(--ok);color:#fff;text-align:center;}
+  .sno{background:#efe7e6;color:#8a4b44;text-align:center;border:1px solid #e6cfcb;}
+  .tinput{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:15px 16px;font-size:17px;
+    font-family:Georgia,"Times New Roman",serif;background:var(--cardbg);color:var(--ink);margin-bottom:14px;outline:none;}
+  .tinput:focus{border-color:var(--green2);background:#fff;box-shadow:0 0 0 3px rgba(47,182,74,.12);}
+  .tinput:disabled{opacity:1;}
+  .hint{background:#fdf6ea;border:1px dashed var(--orange);border-radius:12px;padding:13px 15px;
+    font-family:Georgia,serif;font-size:16px;color:#8a5a12;margin-bottom:14px;letter-spacing:.5px;text-align:center;}
+  .skelbox{background:#eef5ef;border:1px solid #d3e4d8;border-radius:12px;padding:13px 15px;margin-bottom:14px;text-align:center;}
+  .skelbox .sklab{font-size:11.5px;font-weight:800;color:var(--green);letter-spacing:.3px;margin-bottom:8px;}
+  .skelbox #skline{font-family:Georgia,"Times New Roman",serif;font-size:19px;color:var(--ink);line-height:1.75;letter-spacing:.5px;}
+  .skelbox .bl{color:#2f9e5f;font-weight:800;letter-spacing:2px;}
+  .result .big{text-align:center;font-size:56px;margin:6px 0;}
+  .result h2{text-align:center;font-size:22px;margin:2px 0 4px;}
+  .result .score{text-align:center;font-size:15px;color:var(--grey);margin-bottom:6px;}
+  .stars{text-align:center;font-size:30px;letter-spacing:4px;margin:10px 0 4px;}
+  .msg{text-align:center;color:var(--green);font-weight:700;margin:8px 0 20px;font-size:15px;}
+  .foot{text-align:center;color:#9aa79c;font-size:11.5px;margin-top:22px;}
+  .streak{color:var(--orange);font-weight:800;}
+  .empty{text-align:center;padding:16px 6px;color:var(--grey);font-size:15px;line-height:1.6;}
+  .list .grp{font-size:12px;font-weight:800;color:var(--green);margin:14px 2px 6px;letter-spacing:.4px;}
+  .list .row{padding:11px 2px;border-bottom:1px solid var(--line);}
+  .list .row:last-child{border:none;}
+  .list .top{display:flex;gap:10px;align-items:baseline;}
+  .list .e{font-family:Georgia,serif;font-weight:800;font-size:14.5px;flex:0 0 46%;}
+  .list .m{color:var(--grey);font-size:13px;}
+  .list .ex{font-family:Georgia,serif;font-size:13px;color:#3a7850;margin-top:5px;line-height:1.4;}
+  .list .exko{font-size:12px;color:#98a49b;margin-top:1px;}
+  .daytag{display:inline-block;font-size:10px;font-weight:800;color:#fff;background:var(--green2);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+/* ====== 문제은행: 3주차 교재(쉐도잉 핵심표현 6 + Bonus 4) + 3주차 직독직해 DAY10–13 필수패턴(20) ======
+   shadow/shadowko = Anne Hathaway × Matt Damon 인터뷰 쉐도잉 문장 · src/srcko = 원서 The Let Them Theory 실제 문장 · ex/exko = 짧은 연습 예문 · lit = 직역 함정 */
+const ITEMS = [
+  {en:"should have + 과거분사(p.p.)", ko:"~했어야 했다 (그런데 하지 않았다)", cat:"수업", shadow:"I should have sat down with him, should have looked him eye to eye.", shadowko:"그와 마주 앉아서, 눈을 마주 봤어야 했어요.", ex:"You should have told me earlier.", exko:"너는 나에게 더 일찍 말했어야 했어.", src:"I should have put my phone down, but I didn’t.", srcko:"나는 휴대폰을 내려놓았어야 했다, 하지만 그러지 않았다. (DAY5)"},
+  {en:"by + -ing (by giving)", ko:"~함으로써 · ~해서 (수단·방법)", cat:"수업", shadow:"I thought I was being respectful by giving them a bunch of quick nos.", shadowko:"난 빠른 거절을 여러 번 하는 게 예의라고 생각했어요.", ex:"You learn by making mistakes.", exko:"실수를 함으로써 배우는 거야.", src:"By choosing how we respond, we exercise the ultimate power over ourselves.", srcko:"우리가 어떻게 반응할지 선택함으로써, 우리는 우리 자신에 대한 궁극의 힘을 행사한다. (DAY7)"},
+  {en:"get (so) in one’s head · overthink", ko:"자기 생각에 갇혀 불안해지다 · 지나치게 생각하다", cat:"수업", lit:"머릿속으로 (직접) 들어가다", shadow:"Yeah, and I got so in my head. This is me classically, stupidly overthinking things.", shadowko:"네, 그리고 전 생각이 너무 많아졌어요. 이게 딱 전형적인 저예요 — 바보같이 지나치게 생각하는 거.", ex:"Don’t get in your head about what they said.", exko:"걔네가 한 말 가지고 혼자 곱씹지 마.", src:"It paralyzes you with perfectionism. It’s the reason you overthink.", srcko:"그것은 완벽주의로 당신을 마비시킨다. 그것이 바로 당신이 지나치게 생각하는 이유다. (DAY15 · overthink)"},
+  {en:"no one gives a sh*t → no one cares", ko:"아무도 (조금도) 신경 쓰지 않는다", cat:"수업", shadow:"Without missing a beat, he goes, “Oh, no one gives a sh*t.”", shadowko:"한 치의 망설임도 없이, 그가 그러더라고요, “아, 아무도 신경 안 써.”", ex:"Honestly, no one cares what you wear.", exko:"솔직히 네가 뭘 입든 아무도 신경 안 써."},
+  {en:"turn down", ko:"(제안·요청을) 거절하다 · 거부하다", cat:"수업", lit:"(소리·볼륨을) 낮추다 · 아래로 내리다", shadow:"I actually once went to meet Sir Ridley Scott to turn down The Martian.", shadowko:"전 한번은 <마션>을 거절하려고 리들리 스콧 감독을 만나러 갔어요.", ex:"Don’t turn down a good opportunity.", exko:"좋은 기회를 마다하지 마."},
+  {en:"in hindsight (hindsight is 20/20)", ko:"돌이켜 보면 · 지나고 나서 생각하니", cat:"수업", shadow:"And then, in hindsight, I was like: I should have sat down with him.", shadowko:"그러고 나서, 돌이켜보니, 이런 생각이 들었어요: 그와 마주 앉았어야 했다고.", ex:"In hindsight, it was the right call.", exko:"돌이켜보면, 그게 옳은 결정이었어."},
+  {en:"plead one’s case", ko:"자기 입장을 (변호하듯) 호소하다", cat:"수업", lit:"자기 사건을 애원하다", shadow:"…give him a chance to plead his case.", shadowko:"…그가 자기 입장을 호소할 기회를 주다.", ex:"Let me plead my case first.", exko:"내 입장부터 말하게 해줘."},
+  {en:"get a feel for", ko:"서로 감(느낌)을 잡다 · 파악하다", cat:"수업", lit:"~을 만져서 느끼다", shadow:"You just get a feel for each other.", shadowko:"그냥 서로 감(느낌)을 잡게 돼요.", ex:"It takes time to get a feel for a new job.", exko:"새 일에 감을 잡으려면 시간이 걸려."},
+  {en:"without missing a beat", ko:"한 치의 망설임도 없이 · 즉각", cat:"수업", lit:"박자를 놓치지 않고", shadow:"Without missing a beat, he goes, “Oh, no one gives a sh*t.”", shadowko:"한 치의 망설임도 없이, 그가 그러더라고요, “아, 아무도 신경 안 써.”", ex:"She answered without missing a beat.", exko:"그녀는 한 치의 망설임도 없이 대답했어."},
+  {en:"had a ball", ko:"아주 신나게 즐겼다", cat:"수업", lit:"공을 가졌다", shadow:"And I had a ball doing it.", shadowko:"그리고 난 그걸 하면서 아주 신나게 즐겼어요.", ex:"We had a ball at the party.", exko:"우리는 파티에서 아주 신나게 즐겼어."},
+
+  {en:"Whose + 명사 + is it to + 동사원형?", ko:"~하는 것은 누구의 …인가? (책임·몫)", cat:"패턴", day:"DAY10", ex:"Whose job is it to lock the door?", exko:"문을 잠그는 건 누구의 일이야?", src:"Whose responsibility is it to create those friendships?", srcko:"그런 우정을 만드는 것은 누구의 책임인가?"},
+  {en:"unless + 주어 + 동사", ko:"~하지 않는 한", cat:"패턴", day:"DAY10", ex:"You’ll be late unless you hurry.", exko:"서두르지 않으면 너는 늦을 거야.", src:"Unless I saw my old friends post online, I didn’t think about them much either.", srcko:"내 옛 친구들이 온라인에 글 올린 걸 보지 않는 한, 나도 그들을 별로 생각하지 않았다."},
+  {en:"What if + 주어 + 동사?", ko:"~하면 어쩌지? / ~라면 어떨까?", cat:"패턴", day:"DAY10", ex:"What if we miss the train?", exko:"우리가 기차를 놓치면 어쩌지?", src:"What if using Let Them makes you feel lonely?", srcko:"‘렛 뎀’을 쓰는 것이 당신을 외롭게 만든다면 어쩌지?"},
+  {en:"have/has been + -ing", ko:"(지금까지) 계속 ~해 오고 있다 (현재완료진행)", cat:"패턴", day:"DAY10", ex:"I’ve been studying English for years.", exko:"나는 수년째 영어를 공부해 오고 있다.", src:"Have I been doing my part?", srcko:"나는 (그동안) 내 몫을 해 오고 있었는가?"},
+  {en:"so (that) + 주어 + 동사", ko:"~하도록 / ~하기 위해서 (목적)", cat:"패턴", day:"DAY10", ex:"Speak slowly so (that) everyone can understand.", exko:"모두가 이해할 수 있도록 천천히 말해.", src:"Let Me develop better boundaries with work so I have time for friendship.", srcko:"내가 우정을 위한 시간을 갖도록 일과의 경계를 더 잘 세우게 놔두자."},
+  {en:"It’s ~ that … (강조구문)", ko:"…한 것은 바로 ~이다 (특정 부분을 콕 집어 강조)", cat:"패턴", day:"DAY11", ex:"It was John that broke the window.", exko:"창문을 깬 건 바로 존이었다.", src:"It’s in Let Me that you take responsibility for your next move.", srcko:"당신이 다음 행동에 대한 책임을 지는 것은 바로 ‘렛 미’에서다."},
+  {en:"A rather than B", ko:"B라기보다는 (오히려) A · B가 아니라 A", cat:"패턴", day:"DAY11", ex:"I’d walk rather than take the bus.", exko:"난 버스를 타느니 차라리 걷겠어.", src:"You’ll find yourself disconnected rather than empowered.", srcko:"당신은 힘을 얻기는커녕 오히려 단절돼 있는 자신을 발견하게 된다."},
+  {en:"be supposed to + 동사원형", ko:"~하기로 되어 있다 · (원래) ~해야 한다", cat:"패턴", day:"DAY11", ex:"You’re supposed to wear a helmet here.", exko:"여기서는 헬멧을 써야 해.", src:"It’s not supposed to leave you feeling alone and invisible.", srcko:"그것은 당신을 외롭고 존재감 없다고 느끼게 만들어서는 안 된다."},
+  {en:"be capable of + -ing / 명사", ko:"~할 능력이 있다 · ~할 수 있다", cat:"패턴", day:"DAY11", ex:"She is capable of solving hard problems.", exko:"그녀는 어려운 문제를 풀 능력이 있다.", src:"You are capable of creating anything that you want.", srcko:"당신은 원하는 무엇이든 만들어 낼 능력이 있다."},
+  {en:"be willing to + 동사원형", ko:"기꺼이 ~하다 · ~할 의향이 있다", cat:"패턴", day:"DAY11", ex:"I’m willing to help you anytime.", exko:"난 언제든 기꺼이 널 도울게.", src:"…if you are willing to put the time and energy into working for it.", srcko:"…만약 당신이 그것을 위해 기꺼이 시간과 에너지를 쏟을 의향이 있다면."},
+  {en:"can’t afford to + 동사원형", ko:"~할 (금전적·상황적) 여유가 없다 · ~하면 안 된다", cat:"패턴", day:"DAY12", ex:"We can’t afford to lose this client.", exko:"우리는 이 고객을 잃을 여유가 없어.", src:"I could not afford to get sick and lose my voice.", srcko:"나는 병이 나서 목소리를 잃을 여유가 없었다."},
+  {en:"be bound to + 동사원형", ko:"틀림없이 ~하다 · ~하기 마련이다", cat:"패턴", day:"DAY12", ex:"If you rush, you’re bound to make mistakes.", exko:"서두르면 실수하기 마련이야.", src:"…that deep, chest hack that is bound to get everyone around them sick?", srcko:"…주변 사람 모두를 병나게 하기 마련인 그 깊고 가슴을 긁는 기침?"},
+  {en:"Nowhere + 동사 + 주어 (부정어 도치)", ko:"어디에서도 ~하지 않다 (부정어 강조 도치)", cat:"패턴", day:"DAY12", lit:"아무 데도 (장소)", ex:"Never have I seen such a mess.", exko:"나는 이런 엉망진창은 본 적이 없다.", src:"Nowhere is this more evident than at an airport.", srcko:"이것이 공항보다 더 분명하게 드러나는 곳은 없다."},
+  {en:"no matter what + 주어 + 동사", ko:"~가 무엇이든 (상관없이) · 무슨 일이 있어도", cat:"패턴", day:"DAY12", ex:"No matter what happens, I’ll support you.", exko:"무슨 일이 있어도, 난 널 응원할게.", src:"…no matter what is happening on the plane or at the airport, you still hold the power.", srcko:"…비행기에서든 공항에서든 무슨 일이 벌어지고 있든, 당신은 여전히 힘을 쥐고 있다."},
+  {en:"feel like + 명사(구)", ko:"~처럼 느껴지다 · ~인 것 같다", cat:"패턴", day:"DAY12", ex:"This place feels like home.", exko:"이곳은 집처럼 편안하게 느껴져.", src:"Why does a family member’s unsolicited advice feel like a personal attack?", srcko:"왜 가족의 청하지도 않은 조언이 개인적인 공격처럼 느껴지는가?"},
+  {en:"the second (that) + 주어 + 동사", ko:"~하는 바로 그 순간 (= as soon as)", cat:"패턴", day:"DAY13", ex:"The second I saw her, I knew something was wrong.", exko:"그녀를 본 바로 그 순간, 나는 뭔가 잘못됐음을 알았다.", src:"The second you “feel stressed,” your brain goes into a stress response.", srcko:"당신이 “스트레스를 느끼는” 바로 그 순간, 당신의 뇌는 스트레스 반응에 들어간다."},
+  {en:"cause + 목적어 + to부정사", ko:"~가 …하게 만들다 · ~을 유발하다", cat:"패턴", day:"DAY13", ex:"The noise caused the baby to wake up.", exko:"그 소음이 아기를 깨웠다.", src:"Stress causes you to doubt yourself, procrastinate, and burn out.", srcko:"스트레스는 당신이 자신을 의심하고, 미루고, 번아웃되게 만든다."},
+  {en:"have trouble (in) + -ing", ko:"~하는 데 어려움을 겪다", cat:"패턴", day:"DAY13", ex:"I have trouble sleeping these days.", exko:"나는 요즘 잠드는 데 어려움을 겪어.", src:"If you’re having trouble focusing, feeling happy, or taking care of yourself, the reason is stress.", srcko:"만약 집중하고, 행복을 느끼고, 자신을 돌보는 데 어려움을 겪고 있다면, 그 이유는 스트레스다."},
+  {en:"refer to A as B", ko:"A를 B라고 부르다 · 일컫다", cat:"패턴", day:"DAY13", ex:"People refer to him as a genius.", exko:"사람들은 그를 천재라고 부른다.", src:"Many refer to it as our ‘reptilian brain.’", srcko:"많은 이들이 그것을 우리의 ‘파충류 뇌’라고 부른다."},
+  {en:"It’s time (that) + 주어 + (과거)동사", ko:"이제 ~할 때다 (마땅히 그래야 하는데 아직 안 함)", cat:"패턴", day:"DAY13", ex:"It’s time you took a break.", exko:"이제 넌 좀 쉴 때가 됐어.", src:"Stress is a major problem and it’s time you deal with it.", srcko:"스트레스는 중대한 문제이며, 이제 당신이 그것을 마주할 때다."},
+];
+const TIPS=["소리 내서 한 번 말해보면 두 배로 남아요 🔊","월요일 수업에서 자신 있게 써먹기! 🚀","틀린 표현이 오래 기억에 남아요 💪","커닝페이퍼로 한 번 훑고 다시 도전! 📖","쉐도잉 문장은 입으로 한 번 더! 🎬"];
+const ROUND=10;
+
+let S={mode:null,cat:"all",qs:[],i:0,score:0,streak:0,best:0,total:0,wrong:[]};
+const app=document.getElementById('app');
+const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const norm=s=>s.toLowerCase().replace(/[.,!?;:"'’“”\-–—]/g,'').replace(/\s+/g,' ').trim();
+
+function home(){
+  S.mode=null;
+  const seg=(c,t)=>`<button class="${S.cat===c?'on':''}" onclick="setCat('${c}')">${t}</button>`;
+  const wc=S.wrong.length;
+  app.innerHTML=`
+    <div class="brand">Sophie English · 6th Reading Class</div>
+    <h1>3주차 <span class="lt">주말 복습</span></h1>
+    <div class="sub">The Let Them Theory · 3주차 교재(쉐도잉) + 직독직해(DAY10–13)</div>
+    <div class="seg">${seg('all','전체')}${seg('수업','교재 표현')}${seg('패턴','직독직해 패턴')}</div>
+    <button class="btn mode" onclick="start('mc')"><span class="ico">🎯</span><span><span class="t">뜻 맞히기</span><div class="d">표현·문장 → 알맞은 뜻 고르기 (4지선다, 섞어서)</div></span></button>
+    <button class="btn mode" onclick="start('write')"><span class="ico">✍️</span><span><span class="t">영작 연습</span><div class="d">빈칸 뼈대 + 첫 글자 힌트로 쉽게 문장 완성</div></span></button>
+    <button class="btn mode" onclick="start('trap')"><span class="ico">🕵️</span><span><span class="t">직역 함정</span><div class="d">직역하면 안 되는 표현, 진짜 뜻 맞히기</div></span></button>
+    <button class="btn ghost wrongbtn" onclick="reviewWrong()">❌ 틀린 것만 모아보기${wc?` (${wc})`:''}</button>
+    <button class="btn ghost" onclick="cheat()">📖 표현·패턴 전체 보기 (커닝페이퍼)</button>
+    <div class="foot">© 2026 쏘피잉글리쉬 영어원서클래스 · 주말 복습용</div>`;
+}
+function setCat(c){ S.cat=c; home(); }
+
+function start(mode){
+  S.mode=mode; S.i=0; S.score=0; S.streak=0; S.best=0;
+  let pool=ITEMS.filter(x=> S.cat==='all'||x.cat===S.cat);
+  if(mode==='trap') pool=pool.filter(x=>x.lit);
+  if(mode==='write') pool=pool.filter(x=>x.ex);
+  if(pool.length<2){ app.innerHTML=`<div class="card" style="text-align:center"><p style="font-size:15px">이 분류엔 이 게임 문제가 부족해요.<br>다른 분류나 게임을 골라주세요 🙏</p><button class="btn primary" onclick="home()">← 홈으로</button></div>`; return; }
+  S.qs=shuffle(pool).slice(0,Math.min(ROUND,pool.length));
+  S.total=S.qs.length; render();
+}
+function topbar(){
+  const pct=Math.round(S.i/S.total*100);
+  return `<div class="topbar">
+    <button class="pill" style="border:none;cursor:pointer" onclick="home()">← 홈</button>
+    <div>${S.i+1} / ${S.total}${S.streak>1?` · <span class="streak">🔥 ${S.streak}연속</span>`:''}</div>
+    <div class="pill">⭐ ${S.score}</div></div>
+    <div class="prog"><i style="width:${pct}%"></i></div>`;
+}
+function render(){ if(S.i>=S.total)return result();
+  if(S.mode==='mc')return renderMC(); if(S.mode==='write')return renderWrite(); if(S.mode==='trap')return renderTrap(); }
+
+function markWrong(){ const it=S.qs[S.i]; if(!S.wrong.some(w=>w.en===it.en)) S.wrong.push(it); }
+
+/* ---------- 뜻 맞히기 ---------- */
+function renderMC(){
+  const it=S.qs[S.i];
+  const useSent = it.ex && Math.random()<0.5;
+  if(useSent){
+    const wrong=shuffle(ITEMS.filter(x=>x.ex && x.exko!==it.exko)).slice(0,3).map(x=>x.exko);
+    const opts=shuffle([it.exko,...wrong]);
+    S._ansText=it.exko;
+    app.innerHTML=topbar()+`<div class="card"><div class="qlabel">🎯 문장 뜻 맞히기</div>
+      <div class="q en" style="font-size:19px">${esc(it.ex)}</div><div class="qsmall">이 문장의 뜻은?</div>
+      <div id="opts">${opts.map(o=>`<button class="btn opt" onclick="ansMC(this,${o===it.exko})">${esc(o)}</button>`).join('')}</div>
+      <div class="fb" id="fb"></div><div id="exbox"></div><button class="btn primary hidden" id="next" onclick="next()">다음 →</button></div>`;
+  } else {
+    const wrong=shuffle(ITEMS.filter(x=>x.ko!==it.ko)).slice(0,3).map(x=>x.ko);
+    const opts=shuffle([it.ko,...wrong]);
+    S._ansText=it.ko;
+    app.innerHTML=topbar()+`<div class="card"><div class="qlabel">🎯 표현 뜻 맞히기</div>
+      <div class="q en">${esc(it.en)}</div><div class="qsmall">이 표현/패턴의 뜻은?</div>
+      <div id="opts">${opts.map(o=>`<button class="btn opt" onclick="ansMC(this,${o===it.ko})">${esc(o)}</button>`).join('')}</div>
+      <div class="fb" id="fb"></div><div id="exbox"></div><button class="btn primary hidden" id="next" onclick="next()">다음 →</button></div>`;
+  }
+}
+function exBox(it){
+  let h='';
+  if(it.shadow) h+=`<div class="exsrc"><div class="exlab">🎬 쉐도잉 문장 · Anne Hathaway × Matt Damon</div><div class="ensent">${esc(it.shadow)}</div><div class="kosent">${esc(it.shadowko)}</div></div>`;
+  if(it.src) h+=`<div class="exsrc book"><div class="exlab">📖 원서 속 문장 · The Let Them Theory</div><div class="ensent">${esc(it.src)}</div><div class="kosent">${esc(it.srcko)}</div></div>`;
+  if(!it.shadow && !it.src && it.ex) h+=`<div class="exsrc plain"><div class="exlab">✍️ 연습 예문</div><div class="ensent">${esc(it.ex)}</div><div class="kosent">${esc(it.exko)}</div></div>`;
+  return h;
+}
+function ansMC(el,ok){
+  document.querySelectorAll('#opts .opt').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(ok){el.classList.add('correct');good();fb.className='fb ok';fb.textContent=pick(['정확해요! ✅','완벽 👏','바로 그거예요! 🎉']);}
+  else{el.classList.add('wrong');bad();markWrong();fb.className='fb no';fb.textContent='아쉬워요! 정답 표시했어요 👇';
+    document.querySelectorAll('#opts .opt').forEach(b=>{if(b.textContent===S._ansText)b.classList.add('correct');});}
+  const eb=document.getElementById('exbox'); if(eb) eb.innerHTML=exBox(S.qs[S.i]);
+  document.getElementById('next').classList.remove('hidden');
+}
+
+/* ---------- 부분 영작 (빈칸 뼈대 + 첫 글자 힌트) ---------- */
+const WSTOP=new Set("a,an,the,to,of,in,on,at,for,and,or,but,so,as,by,is,am,are,was,were,be,been,being,i,you,he,she,it,we,they,me,him,her,us,them,my,your,his,its,our,their,this,that,those,these,with,not,no,do,does,did,have,has,had,will,would,can,could,if,than,then,up,out,who".split(","));
+function wBlank(tok){ const s=tok.replace(/[^A-Za-z]/g,''); return s.length>=4 && !WSTOP.has(s.toLowerCase()); }
+function skelHTML(ans,mode){
+  return ans.split(/\s+/).map(tok=>{
+    if(!wBlank(tok)) return esc(tok);
+    const alpha=(tok.match(/[A-Za-z]/g)||[]).length;
+    const show = mode==='half' ? Math.max(1,Math.ceil(alpha/2)) : 1;  // 기본: 첫 글자 / half: 절반까지
+    let seen=0;
+    const body=tok.replace(/[A-Za-z]/g,c=>{ seen++; return seen<=show ? c : '_'; });
+    return `<span class="bl">${esc(body)}</span>`;
+  }).join(' ');
+}
+function renderWrite(){
+  const it=S.qs[S.i];
+  S._writeAns = it.ex || it.en;
+  S._writeTried=false; S._hintUsed=false;
+  const prompt = it.exko || it.ko;
+  app.innerHTML=topbar()+`<div class="card"><div class="qlabel">✍️ 부분 영작 · 빈칸 채우기</div>
+    <div class="q">${esc(prompt)}</div><div class="qsmall">아래 <b>뼈대</b>를 보고 문장을 완성해 보세요. 각 빈칸의 <b>첫 글자</b>가 이미 켜져 있어요. (마침표·따옴표는 틀려도 괜찮아요)</div>
+    <div class="skelbox"><div class="sklab" id="sklab">🦴 이 구조로 써보세요 · 첫 글자 힌트 포함</div><div id="skline">${skelHTML(S._writeAns,'first')}</div></div>
+    <input class="tinput" id="win" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="여기에 영어로 입력…">
+    <div class="fb" id="fb"></div>
+    <div id="hinttext"></div>
+    <div id="actions"><div class="selfrow" style="margin-bottom:12px"><button class="btn sno" onclick="showHint()">💡 힌트 더 보기 (절반까지)</button></div></div>
+    <button class="btn primary" id="chk" onclick="checkWrite()">확인</button>
+    <button class="btn primary hidden" id="next" onclick="next()">다음 →</button></div>`;
+  const win=document.getElementById('win'); win.focus();
+  win.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();
+    if(!document.getElementById('chk').classList.contains('hidden')) checkWrite();}});
+}
+function checkWrite(){
+  const win=document.getElementById('win');
+  const ok = norm(win.value)===norm(S._writeAns);
+  const fb=document.getElementById('fb');
+  if(ok){
+    if(!S._writeTried) good();
+    win.disabled=true;
+    fb.className='fb ok'; fb.textContent='정답이에요! ✅';
+    document.getElementById('hinttext').innerHTML=`<div class="reveal"><div class="en">${esc(S._writeAns)}</div></div>`;
+    document.getElementById('actions').innerHTML='';
+    document.getElementById('chk').classList.add('hidden');
+    document.getElementById('next').classList.remove('hidden');
+  } else {
+    if(!S._writeTried){ bad(); markWrong(); S._writeTried=true; }
+    fb.className='fb no'; fb.textContent='아쉬워요! 뼈대를 다시 보거나 힌트 더 보기·정답을 확인해요 👇';
+    document.getElementById('actions').innerHTML=`<div class="selfrow" style="margin-bottom:12px">
+      <button class="btn sno" onclick="showHint()">💡 힌트 더 보기 (절반까지)</button>
+      <button class="btn sno" onclick="showAns()">📖 정답 보기</button></div>`;
+  }
+}
+function showHint(){
+  S._hintUsed=true;
+  const sk=document.getElementById('skline'); if(sk) sk.innerHTML=skelHTML(S._writeAns,'half');
+  const lab=document.getElementById('sklab'); if(lab) lab.textContent='💡 각 빈칸을 절반까지 보여줄게요';
+  const win=document.getElementById('win'); if(!win.disabled) win.focus();
+}
+function showAns(){
+  document.getElementById('hinttext').innerHTML=`<div class="reveal"><div class="qsmall" style="margin:0 0 6px">정답</div><div class="en">${esc(S._writeAns)}</div></div>`;
+  document.getElementById('win').disabled=true;
+  document.getElementById('actions').innerHTML='';
+  document.getElementById('chk').classList.add('hidden');
+  document.getElementById('next').classList.remove('hidden');
+}
+
+/* ---------- 직역 함정 ---------- */
+function renderTrap(){
+  const it=S.qs[S.i];
+  const others=shuffle(ITEMS.filter(x=>x.ko!==it.ko && x.ko!==it.lit)).slice(0,2).map(x=>x.ko);
+  S.trapOpts=shuffle([{t:it.ko,ans:true,lit:false},{t:it.lit,ans:false,lit:true},
+    ...others.map(o=>({t:o,ans:false,lit:false}))]);
+  app.innerHTML=topbar()+`<div class="card"><div class="qlabel">🕵️ 직역 함정 — 진짜 뜻은?</div>
+    <div class="q en">${esc(it.en)}</div><div class="qsmall">직역에 속지 마세요! 실제 뜻을 고르면 돼요.</div>
+    <div id="opts">${S.trapOpts.map((o,idx)=>`<button class="btn opt" onclick="ansTrap(this,${idx})">${esc(o.t)}</button>`).join('')}</div>
+    <div class="fb" id="fb"></div><div id="exbox"></div><button class="btn primary hidden" id="next" onclick="next()">다음 →</button></div>`;
+}
+function ansTrap(el,idx){
+  const o=S.trapOpts[idx];
+  const nodes=document.querySelectorAll('#opts .opt');
+  nodes.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(o.ans){el.classList.add('correct');good();fb.className='fb ok';fb.textContent=pick(['함정 통과! 🕵️','안 속았어요! 👏','진짜 뜻 정확 ✅']);}
+  else{el.classList.add('wrong');bad();markWrong();fb.className='fb no';fb.textContent=o.lit?'앗, 직역 함정에 걸렸어요! 🪤':'아쉬워요! 정답 표시 👇';
+    S.trapOpts.forEach((oo,i)=>{if(oo.ans)nodes[i].classList.add('correct');});}
+  const eb=document.getElementById('exbox'); if(eb) eb.innerHTML=exBox(S.qs[S.i]);
+  document.getElementById('next').classList.remove('hidden');
+}
+
+function good(){S.score+=10;S.streak++;if(S.streak>1)S.score+=2;if(S.streak>S.best)S.best=S.streak;}
+function bad(){S.streak=0;}
+function next(){S.i++;render();}
+
+function result(){
+  const ratio=S.score/(S.total*10);
+  const stars=ratio>=1.15?'⭐⭐⭐':(ratio>=0.75?'⭐⭐☆':(ratio>=0.4?'⭐☆☆':'☆☆☆'));
+  const head=ratio>=1.15?'완벽해요! 🏆':(ratio>=0.75?'훌륭해요! 🎉':(ratio>=0.4?'좋아요, 조금만 더! 💪':'복습이 필요해요 📚'));
+  const wc=S.wrong.length;
+  app.innerHTML=`<div class="card result"><div class="big">${ratio>=0.75?'🎉':'📚'}</div>
+    <h2>${head}</h2><div class="stars">${stars}</div>
+    <div class="score">획득 점수 <b>⭐ ${S.score}</b> · 최고 연속 <span class="streak">🔥 ${S.best}</span></div>
+    <div class="msg">${esc(pick(TIPS))}</div>
+    <button class="btn primary" onclick="start('${S.mode}')">🔁 이 게임 다시하기</button>
+    ${wc?`<button class="btn ghost wrongbtn" onclick="reviewWrong()">❌ 틀린 것만 모아보기 (${wc})</button>`:''}
+    <button class="btn ghost" onclick="home()">🏠 다른 게임 하기</button></div>
+    <div class="foot">주말 동안 3판씩! 월요일 수업에서 바로 써먹어요.</div>`;
+}
+
+/* ---------- 틀린 것만 모아보기 ---------- */
+function rowHTML(x){
+  const line = x.shadow?`<div class="ex">🎬 ${esc(x.shadow)}</div><div class="exko">${esc(x.shadowko)}</div>`
+    : (x.src?`<div class="ex">📖 ${esc(x.src)}</div><div class="exko">${esc(x.srcko)}</div>`
+    : (x.ex?`<div class="ex">${esc(x.ex)}</div><div class="exko">${esc(x.exko)}</div>`:''));
+  const tag=x.day?`<span class="daytag">${x.day}</span>`:'';
+  return `<div class="row"><div class="top"><div class="e">${esc(x.en)}</div><div class="m">${esc(x.ko)}${tag}</div></div>${line}</div>`;
+}
+function reviewWrong(){
+  if(!S.wrong.length){
+    app.innerHTML=`<div class="topbar"><button class="pill" style="border:none;cursor:pointer" onclick="home()">← 홈</button><div><b>틀린 것만 모아보기</b></div><div class="pill">❌ 0</div></div>
+      <div class="card"><div class="empty">아직 틀린 문제가 없어요! 🌱<br>게임을 플레이하면 틀린 표현이<br>여기에 모여서 복습할 수 있어요.</div>
+      <button class="btn primary" onclick="home()">게임하러 가기 →</button></div>`;
+    return;
+  }
+  const rows=S.wrong.map(rowHTML).join('');
+  app.innerHTML=`<div class="topbar"><button class="pill" style="border:none;cursor:pointer" onclick="home()">← 홈</button><div><b>틀린 것만 모아보기</b></div><div class="pill">❌ ${S.wrong.length}</div></div>
+    <div class="card list"><div class="grp">📌 내가 틀렸던 표현·문장 (${S.wrong.length})</div>${rows}</div>
+    <button class="btn primary" onclick="reviewPlay()">🔁 틀린 것만 다시 풀기</button>
+    <button class="btn ghost wrongbtn" onclick="clearWrong()">🧹 목록 비우기</button>
+    <button class="btn ghost" onclick="home()">🏠 홈으로</button>`;
+}
+function reviewPlay(){
+  if(!S.wrong.length)return;
+  S.mode='mc'; S.i=0; S.score=0; S.streak=0; S.best=0;
+  S.qs=shuffle(S.wrong.slice()).slice(0,Math.min(ROUND,S.wrong.length));
+  S.total=S.qs.length; render();
+}
+function clearWrong(){ S.wrong=[]; home(); }
+
+function cheat(){
+  const su=ITEMS.filter(x=>x.cat==='수업');
+  const days=['DAY10','DAY11','DAY12','DAY13'];
+  let html=`<div class="card list"><div class="grp">🎬 3주차 교재 · 쉐도잉 핵심표현 (${su.length})</div>${su.map(rowHTML).join('')}`;
+  days.forEach(d=>{ const g=ITEMS.filter(x=>x.day===d);
+    html+=`<div class="grp">📗 3주차 직독직해 · ${d} 필수패턴 (${g.length})</div>${g.map(rowHTML).join('')}`; });
+  html+=`</div>`;
+  app.innerHTML=`<div class="topbar"><button class="pill" style="border:none;cursor:pointer" onclick="home()">← 홈</button><div><b>전체 보기</b></div><div class="pill">📖 ${ITEMS.length}</div></div>
+    ${html}<button class="btn primary" onclick="home()">게임하러 가기 →</button>`;
+}
+home();
+</script>
+</body>
+</html>
