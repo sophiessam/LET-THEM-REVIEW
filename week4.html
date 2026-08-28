@@ -992,13 +992,11 @@ function speak(text){ try{ if(muted||!window.speechSynthesis)return;
 if(window.speechSynthesis){ speechSynthesis.onvoiceschanged=()=>{}; }
 
 /* ============ Wallet & coin FX ============ */
-let coins=0;
+function loadCoins(){ try{return parseInt(localStorage.getItem('lt_coins')||'0',10)||0;}catch(e){return 0;} }
+function saveCoins(){ try{localStorage.setItem('lt_coins',String(coins));}catch(e){} }
+let coins=loadCoins();   // 지갑 코인 = 기기에 저장(새로고침해도 유지)
 function updateWallet(){ ['walletTop','qlWallet','mWallet','tWallet','rWallet','sWallet','tsWallet'].forEach(id=>{const e=$(id);if(e)e.textContent=coins;}); }
-let lifeCoins=loadLifeCoins();
-function loadLifeCoins(){ try{return parseInt(localStorage.getItem('lt_coins')||'0',10)||0;}catch(e){return 0;} }
-function saveLifeCoins(){ try{localStorage.setItem('lt_coins',String(lifeCoins));}catch(e){} }
 function addCoins(n,fromEl,coinElId){
-  lifeCoins+=n; saveLifeCoins();
   const target=$(coinElId||'qlCoin')||$('walletTop');
   const tr=target.getBoundingClientRect();
   const start=fromEl?fromEl.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0};
@@ -1009,7 +1007,7 @@ function addCoins(n,fromEl,coinElId){
     c.style.left=sx+'px';c.style.top=sy+'px';document.body.appendChild(c);
     const dx=tr.left-sx,dy=tr.top-sy,delay=i*40,add=shares[i];
     requestAnimationFrame(()=>{c.style.transition='transform .5s cubic-bezier(.4,0,.6,1),opacity .5s';c.style.transitionDelay=delay+'ms';c.style.transform=`translate(${dx}px,${dy}px) scale(.6)`;c.style.opacity='.4';});
-    setTimeout(()=>{coins+=add;updateWallet();bump(target);c.remove();},500+delay);
+    setTimeout(()=>{coins+=add;saveCoins();updateWallet();bump(target);c.remove();},500+delay);
   }
   const f=document.createElement('div');f.className='float';f.textContent='+'+n;
   f.style.left=(start.left+(start.width/2||0))+'px';f.style.top=(start.top-6)+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1000);
@@ -1376,7 +1374,7 @@ $('tsHome').onclick=goHome; $('tsStart').onclick=()=>{ const n=($('tsNick').valu
 $('homeRankMore').onclick=showRankingOnly;
 $('rAgain'); $('rHome').onclick=()=>goHome();
 function goHome(){ if(window.speechSynthesis)speechSynthesis.cancel(); updateWallet(); show('home'); loadHomeRanks(); }
-function submitCoins(){ const nick=getNick(); if(!nick||!LEADERBOARD_URL)return; jsonp({action:'submit',nick,score:lifeCoins,mode:'coins'}); }
+function submitCoins(){ const nick=getNick(); if(!nick||!LEADERBOARD_URL)return Promise.resolve(); return jsonp({action:'submit',nick,score:coins,mode:'coins'}); }
 function renderMini(olId,list){
   const ol=$(olId), me=getNick(); ol.innerHTML='';
   if(!list||!Array.isArray(list)){ ol.innerHTML='<li class="hr-empty">불러올 수 없어요 😢</li>'; return; }
@@ -1387,12 +1385,14 @@ function renderMini(olId,list){
 }
 async function loadHomeRanks(){
   if(!LEADERBOARD_URL){ ['homeRankTime','homeRankCoin','homeRankMoreWrap'].forEach(id=>{const e=$(id);if(e)e.style.display='none';}); return; }
-  submitCoins();
   ['homeRankTime','homeRankCoin','homeRankMoreWrap'].forEach(id=>{const e=$(id);if(e)e.style.display='block';});
   if(!$('homeRankTimeList').children.length)$('homeRankTimeList').innerHTML='<li class="hr-empty">불러오는 중... ⏳</li>';
   if(!$('homeRankCoinList').children.length)$('homeRankCoinList').innerHTML='<li class="hr-empty">불러오는 중... ⏳</li>';
-  const [t,c]=await Promise.all([jsonp({action:'top',mode:'time',n:3}), jsonp({action:'top',mode:'coins',n:3})]);
-  renderMini('homeRankTimeList',t); renderMini('homeRankCoinList',c);
+  const coinSubmit=submitCoins();                                   // 코인 등록 시작
+  const timeP=jsonp({action:'top',mode:'time',n:3});                // 타임 랭킹은 병렬로 읽기
+  renderMini('homeRankTimeList', await timeP);
+  await coinSubmit;                                                 // 코인 등록이 끝난 뒤에
+  renderMini('homeRankCoinList', await jsonp({action:'top',mode:'coins',n:3})); // 코인 랭킹 읽기(최신 반영)
 }
 function refreshSoundBtns(){['muteBtn0','muteBtn1','muteBtn2','muteBtn3','muteBtn4','muteBtn5'].forEach(x=>{const e=$(x);if(e){e.textContent=muted?'🔇 OFF':'🔊 ON';e.classList.toggle('on',!muted);e.classList.toggle('off',muted);}});}
 ['muteBtn0','muteBtn1','muteBtn2','muteBtn3','muteBtn4','muteBtn5'].forEach(id=>{const b=$(id);if(b)b.onclick=()=>{muted=!muted;if(muted)stopSpeak();refreshSoundBtns();if(!muted){ac();sfx.coin();}};});
