@@ -69,7 +69,7 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
   transition:all .25s cubic-bezier(.2,1.4,.5,1);}
 .bubble.show{opacity:1;transform:translateY(0) scale(1);}
 /* 말풍선 꼬리(왼쪽 화살표) 제거 */
-/* ---- 📚 나의 서재 ---- */
+/* ---- 🏠 방 꾸미기 게임 ---- */
 .rm-title{font-family:'Jua';font-size:17px;color:var(--deep);text-align:center;margin:6px 0 2px;}
 .rm-scene{border:4px solid var(--deep);border-radius:18px;overflow:hidden;box-shadow:0 6px 0 rgba(0,0,0,.18);background:#fdf1e0;}
 .rm-scene svg{display:block;width:100%;height:auto;}
@@ -224,7 +224,22 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
 .logo .lt .them{color:var(--gold);}
 .logo .sub{font-family:'Press Start 2P';font-size:10px;color:var(--deep);margin-top:8px;letter-spacing:1px;}
 .wallet{display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0 2px;font-family:'Press Start 2P';font-size:16px;color:var(--deep);}
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0;}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:0 0 4px;}
+.tiles.one{grid-template-columns:1fr;}
+.nickbtn{font-family:'Jua';font-size:13px;background:#eafff1;border:3px solid var(--deep);border-radius:999px;
+  padding:5px 10px;margin-left:6px;color:var(--deep);cursor:pointer;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:118px;box-shadow:0 3px 0 rgba(0,0,0,.14);transition:transform .07s;}
+.nickbtn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.14);}
+.sec{display:flex;align-items:center;gap:9px;margin:16px 1px 9px;}
+.sec .lb{font-family:'Jua';font-size:13.5px;color:var(--deep);background:#fff;border:3px solid var(--deep);
+  border-radius:999px;padding:4px 12px;white-space:nowrap;box-shadow:0 3px 0 rgba(0,0,0,.14);}
+.sec .ln{flex:1;height:3px;border-radius:2px;background:var(--deep);opacity:.15;}
+.tile.wide{display:flex;align-items:center;gap:13px;text-align:left;padding:15px 16px;}
+.tile.wide .ic{font-size:36px;flex:none;}
+.tile.wide .tx{flex:1;min-width:0;}
+.tile.wide .tt{margin-top:0;font-size:17px;}
+.tile.wide .td{margin-top:3px;font-size:11.5px;}
+.tile.wide .go{font-family:'Jua';font-size:19px;color:var(--deep);opacity:.35;flex:none;}
 .tile{background:var(--card);border:4px solid var(--deep);border-radius:20px;padding:16px 8px;text-align:center;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.18);transition:transform .08s;}
 .tile:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
 .tile .ic{font-size:38px;line-height:1;}
@@ -318,7 +333,7 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
   <section id="home" class="screen active">
     <div class="topbar">
       <div class="coinbox"><div class="coin spin">$</div><span id="walletTop">0</span></div>
-      <button class="iconbtn" id="resetCoins" title="내 코인 초기화" style="font-size:14px;min-width:34px;margin-left:6px">🔄</button>
+      <button class="nickbtn" id="nickChip" title="닉네임 바꾸기" style="display:none"></button>
       <div class="grow"></div>
       <button class="soundbtn on" id="muteBtn0" title="소리 켜기/끄기">🔊 ON</button>
     </div>
@@ -326,19 +341,33 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
       <div class="lt">The <span class="them">LET&nbsp;THEM</span> Theory</div>
       <div class="sub">COIN QUEST · WEEK 5</div>
     </div>
-    <div style="text-align:center;margin:-4px 0 2px"><span id="nickChip" style="display:none;font-family:'Jua';font-size:14px;background:#eafff1;border:3px solid var(--deep);border-radius:999px;padding:5px 12px;color:var(--deep)"></span></div>
     <div class="sophie-stage" style="min-height:112px">
       <div id="homeBubble" class="bubble show" style="max-width:210px">Hi, It's <b>Sophie</b>!<br>Let's review together 👋</div>
       <div id="homeSophie" class="sophie"></div>
     </div>
+    <div class="sec"><span class="lb">🎯 뜻 맞히기</span><span class="ln"></span></div>
     <div class="tiles">
       <div class="tile q" data-mode="quest"><div class="ic">🎯</div><div class="tt">뜻 퀘스트</div><div class="td">영작까지 하면 코인 ×2!</div></div>
       <div class="tile t" data-mode="time"><div class="ic">⏱️</div><div class="tt">타임어택</div><div class="td">30초! 랭킹 자동 등록 🏆</div></div>
+    </div>
+    <div class="sec"><span class="lb">🎧 듣기 연습</span><span class="ln"></span></div>
+    <div class="tiles">
       <div class="tile l" data-mode="listen"><div class="ic">🔊</div><div class="tt">듣고 맞히기</div><div class="td">발음 듣고 뜻 고르기</div></div>
       <div class="tile d" data-mode="dict"><div class="ic">🎧</div><div class="tt">받아쓰기</div><div class="td">듣고 빈칸 채우기</div></div>
-      <div class="tile s" data-mode="situ"><div class="ic">💬</div><div class="tt">이럴 땐 뭐라고?</div><div class="td">상황에 맞는 표현 고르기</div></div>
-      <div class="tile r" data-mode="room"><div class="ic">📚</div><div class="tt">나의 서재</div><div class="td">맞힐 때마다 방을 꾸며요 🛏️</div></div>
     </div>
+    <div class="sec"><span class="lb">💬 회화 응용</span><span class="ln"></span></div>
+    <div class="tiles one">
+      <div class="tile s wide" data-mode="situ"><div class="ic">💬</div>
+        <div class="tx"><div class="tt">이럴 땐 뭐라고?</div><div class="td">상황을 보고 알맞은 영어로 답하기</div></div>
+        <div class="go">▶</div></div>
+    </div>
+    <div class="sec"><span class="lb">🎮 게임으로 복습</span><span class="ln"></span></div>
+    <div class="tiles one">
+      <div class="tile r wide" data-mode="room"><div class="ic">🏠</div>
+        <div class="tx"><div class="tt">방 꾸미기 게임</div><div class="td">문제를 맞히면 아이템을 획득해요!</div></div>
+        <div class="go">▶</div></div>
+    </div>
+    <div style="height:8px"></div>
     <button class="studybtn" id="openStudy">📖 전체 표현 보기 · 복습 노트</button>
     <div class="demo-banner">📘 <b>5주차 교재</b> + <b>DAY20~23</b> 학습자료 · 표현·패턴·단어 63개 &nbsp;+&nbsp; 🎧받아쓰기 13 · 💬상황응답 12</div>
     <div class="homerank" id="homeRankTime" style="display:none">
@@ -399,7 +428,7 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
     <div class="footer">쏘피쌤과 함께하는 복습 퀴즈~!</div>
   </section>
 
-  <!-- ============ 📚 나의 서재 ============ -->
+  <!-- ============ 🏠 방 꾸미기 게임 ============ -->
   <section id="roomPick" class="screen">
     <div class="topbar">
       <button class="iconbtn" id="rpHome">홈</button>
@@ -408,7 +437,7 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
       <button class="soundbtn on" id="muteBtn7">🔊 ON</button>
     </div>
     <div class="startcard" style="margin-top:12px">
-      <div class="retro" style="font-size:16px;color:var(--deep);text-align:center;margin-bottom:2px">📚 나의 서재</div>
+      <div class="retro" style="font-size:16px;color:var(--deep);text-align:center;margin-bottom:2px">🏠 방 꾸미기 게임</div>
       <p style="text-align:center;font-size:14.5px;color:var(--grey);margin:4px 0 2px" id="rpHi">함께 공부할 캐릭터를 골라주세요!</p>
       <div class="rp-tabs">
         <button class="rp-tab on" id="rpTabF" data-sex="f">👧 여자</button>
@@ -1853,7 +1882,7 @@ function finishQL(){
     again:()=>startQL(ql.mode)});
 }
 
-/* ============ 📚 나의 서재 ============ */
+/* ============ 🏠 방 꾸미기 게임 ============ */
 const K_ROOM='lt_room_w'+WEEK, RM_N=10;
 const ROOM_ITEMS=[
   {id:'desk',n:'책상',e:'🪵'},{id:'chair',n:'의자',e:'🪑'},{id:'bed',n:'침대',e:'🛏️'},
@@ -2038,7 +2067,7 @@ function finishRM(){
   const nk=getNick(); $('rmProg').style.width='100%'; $('rmTitle').textContent=(nk?nk+'의 방':'내 방')+' · 완성!';
   $('rmQuizCard').style.display='none'; $('rmDoneCard').style.display='';
   const full=room.owned.length>=ROOM_ITEMS.length;
-  $('rmDoneTitle').textContent = full?((nk?nk+'의 ':'')+'방 완성! 🎉'):((nk?nk+'의 ':'오늘의 ')+'서재 완성! 📚');
+  $('rmDoneTitle').textContent = full?((nk?nk+'의 ':'')+'방 완성! 🎉'):('오늘의 꾸미기 완료! 🎁');
   $('rmDoneBody').innerHTML=`이번 판 <b>${rm.correct} / ${RM_N}</b> 정답<br>
     📚 책 <b>${room.books}권</b> · 🎁 아이템 <b>${room.owned.length}/${ROOM_ITEMS.length}개</b><br>
     <span style="font-size:13px;color:#7a7a76">방은 저장돼요 — 또 하면 계속 채워집니다!</span>`;
@@ -2319,7 +2348,6 @@ $('tsHome').onclick=goHome; $('tsStart').onclick=()=>{ startTime(); }; $('tsRank
 $('homeRankMore').onclick=showRankingOnly; $('deleteMyRank').onclick=deleteMyRank;
 $('ngStart').onclick=confirmNick;
 $('ngNick').addEventListener('keydown',e=>{ if(e.key==='Enter') confirmNick(); });
-$('resetCoins').onclick=()=>{ if(confirm('내 코인을 0으로 초기화할까요? (랭킹 기록은 그대로예요)')){ coins=0; saveCoins(); updateWallet(); } };
 $('rAgain'); $('rHome').onclick=()=>goHome();
 function goHome(){ if(window.speechSynthesis)speechSynthesis.cancel(); updateWallet(); paintNickChip(); show('home'); loadHomeRanks(); }
 function submitCoins(){ const nick=getNick(); if(!nick||!LEADERBOARD_URL||coins<=0)return Promise.resolve(); return jsonp({action:'submit',nick,score:coins,mode:MODE_COINS}); }
@@ -2337,8 +2365,7 @@ async function deleteMyRank(){
 }
 /* ============ 닉네임 게이트 ============ */
 function paintNickChip(){ const n=getNick(), c=$('nickChip'); if(!c)return;
-  if(n){ c.style.display='inline-block'; c.innerHTML='🙋 '+esc(n)+' <span id="nickEdit" style="cursor:pointer;opacity:.65">✏️</span>';
-    const e=$('nickEdit'); if(e) e.onclick=()=>openNickGate(true); }
+  if(n){ c.style.display='inline-block'; c.textContent='🙋 '+n+' ✏️'; c.onclick=()=>openNickGate(true); }
   else c.style.display='none'; }
 function openNickGate(edit){ setSophie($('ngSophie'),'idle'); $('ngNick').value=edit?getNick():''; $('ngMsg').textContent=''; show('nickGate'); setTimeout(()=>{try{$('ngNick').focus();}catch(e){}},250); }
 function confirmNick(){ const n=($('ngNick').value||'').trim().slice(0,12);
