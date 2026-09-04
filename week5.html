@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>쏘피의 LET THEM 코인 퀘스트 · WEEK 5</title>
+<title>WEEK 5 ・ 주말 코인 퀘스트</title>
+<meta name="description" content="게임 6개로 이번 주 표현 복습하기 🎯">
+<meta property="og:type" content="website">
+<meta property="og:title" content="WEEK 5 ・ 주말 코인 퀘스트">
+<meta property="og:description" content="게임 6개로 이번 주 표현 복습하기 🎯">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="WEEK 5 ・ 주말 코인 퀘스트">
+<meta name="twitter:description" content="게임 6개로 이번 주 표현 복습하기 🎯">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Jua&family=Gaegu:wght@700&display=swap" rel="stylesheet">
@@ -229,6 +236,18 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
 .nickbtn{font-family:'Jua','Gaegu',system-ui,sans-serif;font-size:14px;background:#eafff1;border:3px solid var(--deep);
   border-radius:999px;padding:5px 13px;margin-left:6px;color:var(--ink);white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;max-width:130px;box-shadow:0 3px 0 rgba(0,0,0,.14);}
+.microw{display:flex;align-items:center;gap:9px;margin-top:10px;}
+.micbtn{flex:none;width:54px;height:54px;border-radius:50%;border:4px solid var(--deep);background:#fff3d6;
+  font-size:24px;line-height:1;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.16);transition:transform .07s;}
+.micbtn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.16);}
+.micbtn.rec{background:#ffdada;border-color:#d0342c;animation:micpulse 1s ease-in-out infinite;}
+@keyframes micpulse{0%,100%{box-shadow:0 5px 0 rgba(0,0,0,.16),0 0 0 0 rgba(224,90,90,.6)}
+  50%{box-shadow:0 5px 0 rgba(0,0,0,.16),0 0 0 12px rgba(224,90,90,0)}}
+.michelp{font-family:'Jua';font-size:13.5px;color:var(--grey);line-height:1.45;}
+.michelp b{color:var(--deep);}
+.heard{margin-top:8px;font-family:'Jua';font-size:14.5px;color:var(--deep);background:#fff;border:3px dashed #9ec3e8;
+  border-radius:12px;padding:8px 10px;display:none;}
+.heard .lb{font-size:12px;color:var(--grey);display:block;margin-bottom:2px;}
 .sec{display:flex;align-items:center;gap:9px;margin:16px 1px 9px;}
 .sec .lb{font-family:'Jua';font-size:13.5px;color:var(--deep);background:#fff;border:3px solid var(--deep);
   border-radius:999px;padding:4px 12px;white-space:nowrap;box-shadow:0 3px 0 rgba(0,0,0,.14);}
@@ -411,6 +430,11 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
           <div class="compo-answer" id="compoAnswer"></div>
           <button class="resetbtn" id="compoReset">↺ 처음부터</button>
           <div class="compo-bank" id="compoBank"></div>
+          <div class="microw" id="micRow" style="display:none">
+            <button class="micbtn" id="micBtn" title="말해서 영작하기">🎤</button>
+            <div class="michelp" id="micHelp">🎤 를 누르고 <b>영어로 말해보세요!</b><br>말한 대로 단어가 자동으로 채워져요.</div>
+          </div>
+          <div class="heard" id="heardBox"><span class="lb">🗣️ 이렇게 들렸어요</span><span id="heardTxt"></span></div>
           <div class="compo-msg" id="compoMsg"></div>
           <div class="compo-btns">
             <button class="bigbtn gold" id="compoCheck">완성! ✓</button>
@@ -1743,7 +1767,10 @@ function startComposition(it,cb){
   if(target.length<2||target.length>11){ cb('nocompo'); return; }
   compo={it,target,ans:[],bank:shuffle(target.map((w,i)=>({w,i})))}; compoLocked=false; onCompoEnd=cb;
   $('qlReveal').style.display='none'; $('qlPrev').style.display='none'; $('qlNext').style.display='none';
-  $('compoMsg').textContent=''; $('compoKo').textContent='“'+it.exko+'”'; $('compo').classList.remove('done'); $('compo').style.display='block'; renderCompo();
+  $('compoMsg').textContent=''; $('compoKo').textContent='“'+it.exko+'”'; $('compo').classList.remove('done'); $('compo').style.display='block';
+  $('heardBox').style.display='none'; $('heardTxt').textContent=''; micStop();
+  $('micRow').style.display = SR ? 'flex' : 'none';
+  renderCompo();
 }
 function renderCompo(){
   const bank=$('compoBank'),ans=$('compoAnswer');bank.innerHTML='';ans.innerHTML='';
@@ -1793,20 +1820,65 @@ function updateInsBar(e){ if(!insBar)return; const overAns=inRect(e,rect('compoA
 function dropChip(e){ if(inRect(e,rect('compoAnswer'))){ const {idx}=computeInsert(e.clientX,e.clientY); compo.ans.splice(idx,0,drag.tk); }
   else { compo.bank.push(drag.tk); } renderCompo(); }
 function endDrag(){ if(drag&&drag.clone)drag.clone.remove(); if(insBar){insBar.remove();insBar=null;} const a=$('compoAnswer'); if(a)a.classList.remove('dropzone'); drag=null; }
-function resetCompo(){ if(compoLocked||!compo)return; compo.bank=shuffle(compo.target.map((w,i)=>({w,i}))); compo.ans=[]; $('compoMsg').textContent=''; renderCompo(); }
+function resetCompo(){ if(compoLocked||!compo)return; micStop(); $('heardBox').style.display='none'; compo.bank=shuffle(compo.target.map((w,i)=>({w,i}))); compo.ans=[]; $('compoMsg').textContent=''; renderCompo(); }
 function checkCompo(){
   if(!compo||compoLocked)return;
   if(compo.ans.length<compo.target.length){shakeCompo('아직 단어가 남았어! ✍️');return;}
   const built=compo.ans.map(t=>t.w).join(' ');
   if(norm(built)===norm(compo.it.ex)){
-    compoLocked=true;$('compo').classList.add('done');
+    compoLocked=true;micStop();$('compo').classList.add('done');
     addCoins(qlLastGain,$('compoAnswer'),'qlCoin');sfx.correct();setTimeout(()=>sfx.combo(),120);setSophie($('qlSophie'),'clap');
     sayBubble($('qlBubble'),'영작까지 완벽! 코인 2배! 🎉',true);
     setTimeout(()=>{const cb=onCompoEnd;compo=null;onCompoEnd=null;$('compo').style.display='none';cb&&cb('success');},750);
   }else{shakeCompo('순서를 다시 확인해봐! 🔁');sfx.wrong();}
 }
+/* ---- 🎤 말해서 영작하기 ---- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec=null, recOn=false;
+function micReset(){ recOn=false; const b=$('micBtn'); if(b){b.classList.remove('rec');b.textContent='🎤';}
+  $('micHelp').innerHTML='🎤 를 누르고 <b>영어로 말해보세요!</b><br>말한 대로 단어가 자동으로 채워져요.'; }
+function micStop(){ try{ if(rec) rec.stop(); }catch(e){} micReset(); }
+function fillFromSpeech(said){
+  // 들린 문장을 단어 단위로 정답 순서에 맞춰 배치
+  const want=compo.target.map(w=>norm(w));
+  const got=norm(said).split(/\s+/).filter(Boolean);
+  const pool=compo.target.map((w,i)=>({w,i,used:false}));
+  const ans=[];
+  got.forEach(g=>{ const hit=pool.find(t=>!t.used && norm(t.w)===g); if(hit){hit.used=true;ans.push({w:hit.w,i:hit.i});} });
+  compo.ans=ans; compo.bank=pool.filter(t=>!t.used).map(t=>({w:t.w,i:t.i}));
+  renderCompo();
+  return ans.length===want.length && ans.map(t=>norm(t.w)).join(' ')===want.join(' ');
+}
+function startMic(){
+  if(!SR||!compo||compoLocked) return;
+  if(recOn){ micStop(); return; }
+  try{
+    stopSpeak();
+    rec=new SR(); rec.lang='en-US'; rec.interimResults=false; rec.maxAlternatives=5; rec.continuous=false;
+    recOn=true; const b=$('micBtn'); b.classList.add('rec'); b.textContent='⏹';
+    $('micHelp').innerHTML='<b style="color:#d0342c">듣는 중...</b> 문장을 또박또박 말해보세요 🎧';
+    $('heardBox').style.display='none';
+    rec.onresult=(e)=>{
+      const alts=[...e.results[0]].map(a=>a.transcript);
+      $('heardTxt').textContent=alts[0]; $('heardBox').style.display='block';
+      // 여러 후보 중 정답과 맞는 게 있으면 그걸 사용
+      let ok=false;
+      for(const a of alts){ if(norm(a)===norm(compo.it.ex)){ $('heardTxt').textContent=a; ok=fillFromSpeech(a); break; } }
+      if(!ok) ok=fillFromSpeech(alts[0]);
+      micReset();
+      if(ok){ $('compoMsg').textContent='발음 인식 성공! 완성 버튼을 눌러 확인해요 ✅'; sfx.coin(); }
+      else { $('compoMsg').textContent='조금 다르게 들렸어요. 다시 말하거나 단어를 탭해서 고쳐도 돼요 🙂'; }
+    };
+    rec.onerror=(e)=>{ micReset();
+      $('compoMsg').textContent = e.error==='not-allowed'
+        ? '마이크 권한이 필요해요. 주소창의 자물쇠 → 마이크 허용으로 바꿔주세요 🎤'
+        : (e.error==='no-speech' ? '소리가 안 들렸어요. 다시 한 번 말해볼까요? 🎤' : '음성 인식을 사용할 수 없어요 😢'); };
+    rec.onend=()=>micReset();
+    rec.start();
+  }catch(err){ micReset(); $('compoMsg').textContent='음성 인식을 시작할 수 없어요 😢'; }
+}
 function shakeCompo(msg){const el=$('compo');el.classList.remove('shk');void el.offsetWidth;el.classList.add('shk');$('compoMsg').textContent=msg;}
-function skipCompo(){ if(compoLocked||!compo)return; stopSpeak(); const cb=onCompoEnd;compo=null;onCompoEnd=null;$('compo').style.display='none';cb&&cb('skip'); }
+function skipCompo(){ if(compoLocked||!compo)return; micStop(); stopSpeak(); const cb=onCompoEnd;compo=null;onCompoEnd=null;$('compo').style.display='none';cb&&cb('skip'); }
 
 /* ============ QUEST / LISTEN engine ============ */
 let ql=null, qlLastGain=0;
@@ -2404,6 +2476,7 @@ document.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const m=t.dataset.
   else if(m==='time'){ LEADERBOARD_URL?openTimeStart():startTime(); } });
 $('qlHome').onclick=()=>goHome(); $('mHome').onclick=()=>{clearInterval(mm&&mm.timer);goHome();}; $('tHome').onclick=()=>{clearInterval(ta&&ta.timer);goHome();};
 $('qlPrev').onclick=qlPrev; $('qlNext').onclick=qlNext;
+$('micBtn').onclick=startMic;
 $('compoCheck').onclick=checkCompo; $('compoSkip').onclick=skipCompo; $('compoReset').onclick=resetCompo;
 $('rpTabF').onclick=()=>{pickSex='f';renderCharGrid();ac();sfx.coin();};
 $('rpTabM').onclick=()=>{pickSex='m';renderCharGrid();ac();sfx.coin();};
