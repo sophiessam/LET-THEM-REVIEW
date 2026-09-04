@@ -172,6 +172,13 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
 @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 .reveal{font-size:15px;background:#fff8e6;border:2px dashed var(--gold2);border-radius:12px;padding:10px 12px;margin-bottom:10px;line-height:1.45;}
 .reveal .en{font-weight:bold;color:var(--deep);} .reveal .exko{color:var(--grey);}
+.echotip{display:none;opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease;
+  font-family:'Jua',system-ui,sans-serif;font-size:15px;color:#0e6b52;background:#e6fff2;
+  border:2px solid var(--ok);border-radius:12px;padding:8px 12px;margin-bottom:10px;text-align:center;line-height:1.4;}
+.echotip.show{opacity:1;transform:translateY(0);}
+.echotip .em{display:inline-block;margin-right:5px;animation:echopulse 1.1s ease-in-out infinite;}
+.echotip .sub{display:block;font-family:system-ui,sans-serif;font-size:12.5px;color:#4f8a76;margin-top:2px;}
+@keyframes echopulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
 .playline{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;font-size:14px;background:var(--purple);color:#fff;border:2px solid var(--deep);border-radius:8px;cursor:pointer;vertical-align:middle;box-shadow:0 2px 0 rgba(0,0,0,.18);padding:0;}
 .playline:active{transform:translateY(2px);box-shadow:0 0 0;}
 .playline.playing{animation:sbounce .6s ease infinite;}
@@ -459,6 +466,7 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
             <button class="ghostbtn" id="compoSkip">영작 없이 넘어가기 ⏭️</button>
           </div>
         </div>
+        <div class="echotip" id="qlEcho"><span class="em">🗣️</span>따라 말해보세요!<span class="sub">소리 내어 한 번 읽으면 훨씬 오래 기억나요</span></div>
         <div class="reveal" id="qlReveal"></div>
         <div class="navbtns">
           <button class="bigbtn sm blue" id="qlPrev">이전</button>
@@ -645,6 +653,7 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
           <div class="rm-pick-h">🎁 아이템을 하나 골라 방에 놓아보자!</div>
           <div class="rm-pick-btns" id="rmPickBtns"></div>
         </div>
+        <div class="echotip" id="rmEcho"><span class="em">🗣️</span>따라 말해보세요!<span class="sub">소리 내어 한 번 읽으면 훨씬 오래 기억나요</span></div>
         <div class="reveal" id="rmReveal"></div>
         <div class="navbtns"><button class="bigbtn" id="rmNext">다음 ▶</button></div>
       </div>
@@ -1769,6 +1778,13 @@ function addCoins(n,fromEl,coinElId){
 function bump(el){el.style.transition='transform .15s';el.style.transform='scale(1.35)';setTimeout(()=>el.style.transform='',150);}
 function popCombo(n){const c=document.createElement('div');c.className='combo';c.textContent=n+' COMBO!';document.body.appendChild(c);requestAnimationFrame(()=>c.classList.add('go'));setTimeout(()=>c.remove(),1000);}
 function sayBubble(el,txt,emph){el.classList.remove('show');el.innerHTML=emph?`<b>${txt}</b>`:txt;requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));}
+/* 정답 문장을 읽어줄 때 "따라 말해보세요" 안내 */
+function showEcho(id,on){ const e=$(id); if(!e)return;
+  e.classList.remove('show');
+  if(!on){ e.style.display='none'; return; }
+  e.style.display='block';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>e.classList.add('show'))); }
+function speakEcho(text,id){ speak(text); if(!muted) showEcho(id,1); }
 const LINES={
   ask:['자, 이건 뭘까? 🤔','천천히 골라봐~ 🧐','이거 알 것 같은데? 💡','집중! Focus! 🎯','What do you think? 🤓','골라볼까? ✏️','You can do it! 💪'],
   good:['좋았어! 👏','정확해! 💯',"That's it! 🎯",'바로 그거야! 🙌','Perfect! ✨','You got it! ⭐','굿굿! 😊','훌륭해! 👍','Nailed it! 🔥','완벽해! 🌟','Excellent! 🎉','최고야! 😎'],
@@ -1964,6 +1980,7 @@ function tagOf(it){
 }
 function renderQL(){
   const q=ql.deck[ql.qi], reviewed=ql.qi<ql.frontier;
+  showEcho('qlEcho',0);
   $('qlProg').style.width=(ql.frontier/ql.total*100)+'%';
   $('qlStage').textContent=`STAGE ${ql.qi+1} / ${ql.total}`+(reviewed?' · 복습':'');
   const tag=$('qlTag');
@@ -2019,8 +2036,8 @@ function pickQL(btn,o,q){
     if(ql.combo>=2){popCombo(ql.combo);sfx.combo();sayBubble($('qlBubble'),line('combo'),true);} else sayBubble($('qlBubble'),line('good'),true);
     ql.answers[ql.qi]={chosen:o.t,correct:true};
     $('qlAnswer').classList.add('show');
-    if(ql.mode==='dict'||ql.mode==='situ'){ speak(ql.mode==='dict'?q.it.full:q.it.ans); finalizeQL(q); }
-    else startComposition(q.it,(res)=>{ if(res==='skip'){ qlNext(); } else { speak(q.it.ex); finalizeQL(q); } });
+    if(ql.mode==='dict'||ql.mode==='situ'){ finalizeQL(q); speakEcho(ql.mode==='dict'?q.it.full:q.it.ans,'qlEcho'); }
+    else startComposition(q.it,(res)=>{ if(res==='skip'){ qlNext(); } else { finalizeQL(q); speakEcho(q.it.ex,'qlEcho'); } });
   }else{
     btn.classList.add('wrong');btns.forEach(b=>{if(b.textContent.includes(ct))b.classList.add('correct');else if(b!==btn)b.classList.add('dim');});
     ql.combo=0;updateQLCombo();sfx.wrong();setSophie($('qlSophie'),'sad');sayBubble($('qlBubble'),line('miss'),true);
@@ -2033,16 +2050,16 @@ function finalizeQL(q){ showQLReveal(q); $('qlReveal').style.display=''; $('qlPr
 function showQLReveal(q){const it=q.it;
   if(ql.mode==='dict'){
     $('qlReveal').innerHTML=`<span class="en">${esc(it.ans)}</span><br><span class="exko"><button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.full)}<br>${esc(it.ko)}</span>`;
-    const pb0=$('qlPlay'); if(pb0) pb0.onclick=()=>{pb0.classList.add('playing');speak(it.full);setTimeout(()=>pb0.classList.remove('playing'),1800);};
+    const pb0=$('qlPlay'); if(pb0) pb0.onclick=()=>{pb0.classList.add('playing');speakEcho(it.full,'qlEcho');setTimeout(()=>pb0.classList.remove('playing'),1800);};
     return;
   }
   if(ql.mode==='situ'){
     $('qlReveal').innerHTML=`<span class="en">${esc(it.ans)}</span><br><span class="exko"><button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.ko)}</span>`;
-    const pb1=$('qlPlay'); if(pb1) pb1.onclick=()=>{pb1.classList.add('playing');speak(it.ans);setTimeout(()=>pb1.classList.remove('playing'),1800);};
+    const pb1=$('qlPlay'); if(pb1) pb1.onclick=()=>{pb1.classList.add('playing');speakEcho(it.ans,'qlEcho');setTimeout(()=>pb1.classList.remove('playing'),1800);};
     return;
   }
   $('qlReveal').innerHTML=`<span class="en">${esc(it.en)}</span> — ${esc(it.ko)}<br><span class="exko"><button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.ex)}<br>${esc(it.exko)}</span>`;
-  const pb=$('qlPlay'); if(pb) pb.onclick=()=>{pb.classList.add('playing');speak(it.ex);setTimeout(()=>pb.classList.remove('playing'),1400);};
+  const pb=$('qlPlay'); if(pb) pb.onclick=()=>{pb.classList.add('playing');speakEcho(it.ex,'qlEcho');setTimeout(()=>pb.classList.remove('playing'),1400);};
 }
 function updateQLCombo(){$('qlCombo').textContent='COMBO '+ql.combo;$('qlCombo').style.background=ql.combo>=3?'var(--orange)':(ql.combo>=2?'var(--green2)':'var(--green)');}
 function qlNext(){ stopSpeak(); if(ql.qi<ql.frontier){ ql.qi=ql.frontier; renderQL(); return; } // return from review
@@ -2201,7 +2218,7 @@ function startRoom(){
   updateWallet(); paintRoom(); show('room'); renderRM();
 }
 function renderRM(){
-  const q=rm.deck[rm.i]; rm.lock=false;
+  const q=rm.deck[rm.i]; rm.lock=false; showEcho('rmEcho',0);
   const nk=getNick(); $('rmTitle').textContent=(nk?nk+'의 방':'내 방')+' · '+(rm.i+1)+' / '+RM_N;
   $('rmProg').style.width=(rm.i/RM_N*100)+'%';
   $('rmInfo').innerHTML=`📚 책 <b>${room.books}권</b> · 🎁 아이템 <b>${room.owned.length}/${ROOM_ITEMS.length}개</b> &nbsp;—&nbsp; 맞히면 책이 쌓여요!`;
@@ -2225,7 +2242,7 @@ function pickRM(btn,o,q){
   if(o.ok){
     btn.classList.add('correct'); btns.forEach(b=>{if(b!==btn)b.classList.add('dim');});
     rm.correct++; room.books++; saveRoom(); paintRoom(true);
-    addCoins(10,btn,'rmCoin'); sfx.correct(); setTimeout(()=>sfx.coin(),110); speak(q.it.ex);
+    addCoins(10,btn,'rmCoin'); sfx.correct(); setTimeout(()=>sfx.coin(),110); speakEcho(q.it.ex,'rmEcho');
     $('rmInfo').innerHTML = (room.books===1)
       ? '📗 첫 책 <b>The Let Them Theory</b> 를 책장에 꽂았어요! ✨'
       : `📖 책 한 권이 짜잔! <b>책 ${room.books}권</b>이 됐어요 ✨`;
