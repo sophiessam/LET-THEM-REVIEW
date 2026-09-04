@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>쏘피의 LET THEM 코인 퀘스트 · WEEK 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Jua&family=Gaegu:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#137a4d; --green2:#2fd06a; --deep:#0d3d28; --ink:#25241f; --grey:#5b6a61;
+  --orange:#f0951e; --gold:#ffd23a; --gold2:#ffb300; --red:#ff5a52; --blue:#3fa0ff; --purple:#9b6cff;
+  --sky1:#8be0ff; --sky2:#d6f6ff; --cream:#fff7e6; --card:#fffdf6; --line:#e6ddc4;
+  --ok:#2fbf6b; --no:#ff6b62; --shadow:0 6px 0 rgba(0,0,0,.18);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;height:100%;}
+body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
+  background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 45%,#eafff2 100%);
+  overflow-x:hidden; min-height:100%;}
+.wrap{max-width:520px;margin:0 auto;padding:12px 14px 40px;position:relative;min-height:100vh;}
+.retro{font-family:'Press Start 2P',cursive;}
+
+/* ===== top bar (back + coins + mute) ===== */
+.topbar{position:sticky;top:0;z-index:20;display:flex;gap:8px;align-items:center;
+  background:rgba(255,255,255,.72);backdrop-filter:blur(6px);border:3px solid var(--deep);
+  border-radius:16px;padding:7px 9px;box-shadow:var(--shadow);margin-bottom:10px;}
+.coinbox{display:flex;align-items:center;gap:7px;font-family:'Press Start 2P';font-size:14px;color:var(--deep);}
+.coin{width:25px;height:25px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff2a8,var(--gold) 55%,var(--gold2));
+  border:2px solid #c98a00;display:grid;place-items:center;font-family:'Press Start 2P';font-size:10px;color:#8a5a00;
+  box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);}
+.coin.spin{animation:coinspin 1s linear infinite;}
+@keyframes coinspin{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
+.topbar .grow{flex:1;}
+.pill{font-family:'Press Start 2P';font-size:9px;color:#fff;background:var(--green);border:2px solid var(--deep);
+  border-radius:20px;padding:6px 8px;box-shadow:0 3px 0 rgba(0,0,0,.18);}
+.iconbtn{font-size:16px;background:#fff;border:2px solid var(--deep);border-radius:12px;min-width:38px;height:34px;padding:0 8px;
+  cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.18);line-height:1;font-family:'Jua';color:var(--deep);}
+.iconbtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.18);}
+.soundbtn{font-family:'Jua';font-size:12.5px;border:2px solid var(--deep);border-radius:12px;height:34px;padding:0 11px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.18);white-space:nowrap;line-height:1;}
+.soundbtn.on{background:var(--green2);color:var(--deep);}
+.soundbtn.off{background:#d8ded9;color:#8a958e;}
+.soundbtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.18);}
+.rankbox{margin-top:16px;border-top:2px dashed var(--line);padding-top:13px;text-align:left;}
+.rankhead{font-family:'Press Start 2P';font-size:11px;color:var(--deep);margin-bottom:10px;text-align:center;}
+.rankform{display:flex;gap:8px;margin-bottom:8px;}
+.rankform input{flex:1;font-family:'Jua';font-size:15px;padding:10px 12px;border:3px solid var(--deep);border-radius:12px;outline:none;min-width:0;}
+.rankform .bigbtn.sm{width:auto;padding:0 16px;font-size:11px;}
+.rankstatus{font-size:13px;color:var(--grey);min-height:16px;margin-bottom:8px;text-align:center;}
+.ranklist{list-style:none;margin:0;padding:0;}
+.ranklist li{display:flex;align-items:center;gap:9px;padding:8px 11px;border:2px solid var(--line);border-radius:10px;margin-bottom:6px;font-size:15px;background:#fff;}
+.ranklist li .rk{font-family:'Press Start 2P';font-size:11px;color:var(--grey);min-width:24px;text-align:center;}
+.ranklist li .nm{flex:1;font-weight:bold;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ranklist li .sc{font-family:'Press Start 2P';font-size:12px;color:var(--green);}
+.ranklist li.me{background:#fff6da;border-color:var(--gold2);}
+.ranklist li.r1 .rk{color:#f6b700;font-size:15px;} .ranklist li.r2 .rk{color:#9aa7b0;font-size:14px;} .ranklist li.r3 .rk{color:#c9812e;font-size:13px;}
+
+/* progress / stage */
+.prog{height:13px;background:#e9f6ee;border:3px solid var(--deep);border-radius:20px;overflow:hidden;margin-bottom:6px;box-shadow:var(--shadow);}
+.prog>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green2),var(--green));transition:width .4s cubic-bezier(.2,1.3,.5,1);}
+.prog.time>i{background:linear-gradient(90deg,#ff5a52,#ffd23a);transition:width .25s linear;}
+.stagelabel{font-family:'Press Start 2P';font-size:9px;color:var(--deep);text-align:center;margin-bottom:10px;letter-spacing:.5px;}
+
+/* ===== Sophie ===== */
+.sophie-stage{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin:2px 0 10px;min-height:118px;position:relative;}
+.bubble{position:relative;background:#fff;border:3px solid var(--deep);border-radius:16px;padding:9px 12px;
+  font-size:16px;max-width:225px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px) scale(.9);
+  transition:all .25s cubic-bezier(.2,1.4,.5,1);}
+.bubble.show{opacity:1;transform:translateY(0) scale(1);}
+/* 말풍선 꼬리(왼쪽 화살표) 제거 */
+/* ---- 📚 나의 서재 ---- */
+.rm-title{font-family:'Jua';font-size:17px;color:var(--deep);text-align:center;margin:6px 0 2px;}
+.rm-scene{border:4px solid var(--deep);border-radius:18px;overflow:hidden;box-shadow:0 6px 0 rgba(0,0,0,.18);background:#fdf1e0;}
+.rm-scene svg{display:block;width:100%;height:auto;}
+.rm-info{font-family:'Jua';font-size:13.5px;color:var(--deep);text-align:center;margin:8px 0 4px;line-height:1.45;}
+.ritem,.bookpop{transform-box:fill-box;transform-origin:50% 100%;}
+.ritem.pop,.bookpop{animation:ripop .55s cubic-bezier(.2,1.5,.4,1);}
+@keyframes ripop{0%{transform:scale(.2) translateY(12px);opacity:0}62%{transform:scale(1.14)}100%{transform:none;opacity:1}}
+.rm-pick{background:#fff8e8;border:3px dashed var(--orange);border-radius:16px;padding:12px;margin-bottom:10px;}
+.rm-pick-h{font-family:'Jua';font-size:15px;color:var(--deep);text-align:center;margin-bottom:10px;}
+.rm-pick-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rm-item{background:#fff;border:4px solid var(--deep);border-radius:16px;padding:12px 4px;cursor:pointer;
+  box-shadow:0 5px 0 rgba(0,0,0,.16);transition:transform .07s;}
+.rm-item:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.16);}
+.rm-item .e{display:block;font-size:32px;line-height:1;}
+.rm-item .n{display:block;font-family:'Jua';font-size:15px;color:var(--deep);margin-top:6px;}
+.rp-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.rp-tab{font-family:'Jua';font-size:16px;padding:11px 4px;border-radius:14px;border:4px solid var(--deep);
+  background:#fff;color:var(--grey);cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.16);}
+.rp-tab.on{background:var(--green);color:#fff;}
+.rp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:12px;}
+.rp-card{background:#fff;border:4px solid var(--deep);border-radius:18px;padding:9px 3px 7px;text-align:center;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.18);}
+.rp-card.on{background:#eafff1;border-color:var(--green);}
+.rp-card svg{width:100%;max-width:74px;height:auto;}
+.rp-card .chk{font-family:'Jua';font-size:13px;color:var(--green);height:16px;line-height:16px;}
+.rp-card:not(.on) .chk{visibility:hidden;}
+.rm-done{text-align:center;}
+.rm-done .t{font-family:'Press Start 2P';font-size:15px;color:var(--deep);margin:6px 0 10px;line-height:1.6;}
+.rm-done .bd{font-family:'Jua';font-size:15.5px;color:var(--ink);line-height:1.75;margin-bottom:12px;}
+/* ---- ⚡ 맞아? 틀려? ---- */
+.sw-wrap{position:relative;margin:8px 0 4px;}
+.sw-ghost{position:absolute;left:0;right:0;top:0;height:100%;border:4px solid var(--deep);border-radius:24px;background:#eef2ee;}
+.sw-ghost.g1{transform:translateY(8px) scale(.965);} .sw-ghost.g2{transform:translateY(16px) scale(.93);opacity:.6;}
+.sw-card{position:relative;background:#fff;border:4px solid var(--deep);border-radius:24px;padding:26px 16px;text-align:center;
+  box-shadow:0 7px 0 rgba(0,0,0,.18);transition:transform .32s ease,opacity .32s ease;}
+.sw-card.go-right{transform:translateX(125%) rotate(13deg);opacity:0;}
+.sw-card.go-left{transform:translateX(-125%) rotate(-13deg);opacity:0;}
+.sw-card.pop{animation:swpop .3s ease;}
+.sw-card.shake{animation:swshake .42s ease;border-color:#e05a5a;}
+@keyframes swshake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+@keyframes swpop{from{transform:translateY(20px) scale(.93);opacity:0}to{transform:none;opacity:1}}
+.sw-en{font-family:'Jua';font-size:24px;color:var(--deep);line-height:1.3;word-break:keep-all;}
+.sw-eq{font-family:'Press Start 2P';font-size:12px;color:#bcc4bc;margin:12px 0 10px;}
+.sw-ko{font-family:'Jua';font-size:21px;color:var(--green);line-height:1.4;word-break:keep-all;}
+.sw-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.sw-btn{font-family:'Jua';font-size:21px;padding:18px 6px;border-radius:20px;border:4px solid var(--deep);
+  box-shadow:0 6px 0 rgba(0,0,0,.18);cursor:pointer;transition:transform .07s;}
+.sw-btn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+.sw-btn:disabled{opacity:.45;}
+.sw-no{background:#ffe0e0;color:#c0392b;} .sw-yes{background:#d9ffe9;color:#12793f;}
+.sw-msg{text-align:center;font-family:'Jua';font-size:15.5px;min-height:52px;margin-top:12px;line-height:1.45;color:var(--deep);}
+.sw-msg .fix{color:var(--green);} .sw-left{text-align:center;font-family:'Jua';font-size:13.5px;color:var(--grey);margin:2px 0 0;}
+.sw-streak{display:flex;justify-content:center;gap:5px;margin-top:6px;}
+.sw-dot{width:11px;height:11px;border-radius:50%;border:2px solid var(--deep);background:#fff;}
+.sw-dot.on{background:var(--orange);}
+.bubble b{color:var(--green);}
+.sophie{width:92px;height:108px;position:relative;flex:0 0 auto;transform-origin:bottom center;}
+.sophie.bounce{animation:sbounce .5s ease;}
+@keyframes sbounce{0%,100%{transform:translateY(0)}30%{transform:translateY(-14px)}60%{transform:translateY(0)}}
+.sophie.sad{animation:sshake .5s ease;}
+@keyframes sshake{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+.sophie.clap .hand.l{animation:clapL .28s ease-in-out infinite;}
+.sophie.clap .hand.r{animation:clapR .28s ease-in-out infinite;}
+@keyframes clapL{0%,100%{transform:translateX(0) rotate(0)}50%{transform:translateX(11px) rotate(12deg)}}
+@keyframes clapR{0%,100%{transform:translateX(0) rotate(0)}50%{transform:translateX(-11px) rotate(-12deg)}}
+
+/* ===== Card / question ===== */
+.card{background:var(--card);border:3px solid var(--deep);border-radius:20px;padding:15px 15px 17px;box-shadow:var(--shadow);position:relative;}
+.qtag{display:inline-block;font-family:'Press Start 2P';font-size:8px;color:#fff;padding:5px 8px;border-radius:20px;border:2px solid var(--deep);margin-bottom:10px;}
+.qtag.sup{background:var(--orange);} .qtag.pat{background:var(--blue);} .qtag.trap{background:var(--red);} .qtag.listen{background:var(--purple);}
+.qtag.dict{background:#2b7fd4;} .qtag.situ{background:#d4468f;}
+.qprompt{font-size:14px;color:var(--grey);margin:0 0 4px;}
+.qmain{font-size:22px;line-height:1.35;color:var(--ink);margin:0 0 14px;word-break:keep-all;}
+.qmain .hl{color:var(--green);}
+.listenbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;font-family:'Jua';font-size:19px;color:#fff;
+  background:var(--purple);border:3px solid var(--deep);border-radius:16px;padding:20px;cursor:pointer;box-shadow:0 5px 0 var(--deep);margin:2px 0 14px;}
+.listenbtn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--deep);}
+.listenbtn .spk{font-size:26px;}
+.listenbtn.playing .spk{animation:sbounce .6s ease infinite;}
+.showtext{text-align:center;font-size:13px;color:var(--purple);text-decoration:underline;cursor:pointer;margin:-4px 0 12px;}
+.opts{display:grid;gap:9px;}
+.opt{font-family:'Jua','Gaegu';font-size:16px;text-align:left;background:#fff;border:3px solid var(--deep);border-radius:14px;
+  padding:12px 13px;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.16);transition:transform .06s;word-break:keep-all;color:var(--ink);}
+.opt:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.16);}
+.opt .k{font-family:'Press Start 2P';font-size:10px;color:var(--green);margin-right:8px;}
+.opt.correct{border-color:var(--ok);background:#e6ffef;box-shadow:0 4px 0 #1c8f4d;}
+.opt.wrong{background:#ffe9e7;border-color:var(--no);box-shadow:0 4px 0 #c94b43;}
+.opt.dim{opacity:.45;}
+.opt:disabled{cursor:default;}
+
+/* answer bar / reveal / composition */
+.answerbar{margin-top:13px;display:none;}
+.answerbar.show{display:block;animation:pop .3s cubic-bezier(.2,1.4,.5,1);}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.reveal{font-size:15px;background:#fff8e6;border:2px dashed var(--gold2);border-radius:12px;padding:10px 12px;margin-bottom:10px;line-height:1.45;}
+.reveal .en{font-weight:bold;color:var(--deep);} .reveal .exko{color:var(--grey);}
+.playline{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;font-size:14px;background:var(--purple);color:#fff;border:2px solid var(--deep);border-radius:8px;cursor:pointer;vertical-align:middle;box-shadow:0 2px 0 rgba(0,0,0,.18);padding:0;}
+.playline:active{transform:translateY(2px);box-shadow:0 0 0;}
+.playline.playing{animation:sbounce .6s ease infinite;}
+.compo{background:#eaf3ff;border:3px solid var(--blue);border-radius:16px;padding:12px;margin-bottom:12px;animation:pop .3s cubic-bezier(.2,1.4,.5,1);}
+.compo.shk{animation:shk .4s;}
+@keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}60%{transform:translateX(7px)}80%{transform:translateX(-4px)}}
+.compo.done{border-color:var(--ok);background:#e6ffef;}
+.compo-head{font-family:'Jua';font-size:15px;color:var(--blue);margin-bottom:8px;}
+.compo-head b{color:var(--orange);font-size:18px;}
+.compo-guide{font-size:12.5px;color:#4a5c7a;background:#fff;border:1px dashed var(--blue);border-radius:10px;padding:7px 10px;margin-bottom:10px;line-height:1.5;}
+.compo-guide b{color:var(--blue);}
+.compo-ko{font-size:17px;color:var(--ink);margin-bottom:10px;font-weight:bold;word-break:keep-all;}
+.compo-answer{min-height:46px;background:#fff;border:2px dashed var(--blue);border-radius:12px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:9px;}
+.compo-ph{color:#9bb3c9;font-size:13px;}
+.compo-bank{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;min-height:20px;}
+.chip{display:inline-block;font-family:'Jua','Gaegu';font-size:16px;padding:9px 12px;border:2px solid var(--deep);border-radius:10px;cursor:grab;box-shadow:0 3px 0 rgba(0,0,0,.15);color:var(--ink);user-select:none;touch-action:none;}
+.chip.bank{background:#fff;} .chip.ans{background:var(--gold);color:#7a4d00;}
+.chip:active{cursor:grabbing;}
+.chip.dragging{opacity:.28;}
+.dragclone{position:fixed;z-index:120;pointer-events:none;font-family:'Jua','Gaegu';font-size:16px;padding:9px 12px;border:2px solid var(--deep);border-radius:10px;background:var(--gold);color:#7a4d00;box-shadow:0 8px 16px rgba(0,0,0,.28);transform:translate(-50%,-55%) rotate(-3deg) scale(1.06);}
+.insbar{position:fixed;z-index:119;width:4px;background:var(--blue);border-radius:2px;pointer-events:none;box-shadow:0 0 7px var(--blue);}
+.compo-answer.dropzone{background:#eaf1ff;border-color:var(--green2);}
+.resetbtn{display:block;margin:0 0 8px auto;font-family:'Jua';font-size:12px;background:#fff;border:2px solid var(--blue);color:var(--blue);border-radius:10px;padding:5px 11px;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.12);}
+.resetbtn:active{transform:translateY(2px);box-shadow:0 0 0;}
+.sparkle{position:fixed;z-index:58;pointer-events:none;animation:spk .85s ease-out forwards;}
+@keyframes spk{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.15) rotate(18deg)}100%{opacity:0;transform:translate(-50%,-150%) scale(.7) rotate(55deg)}}
+.compo-msg{font-size:13px;color:var(--red);min-height:17px;margin-bottom:6px;}
+.compo-btns{display:flex;gap:8px;}
+.compo-btns .bigbtn{flex:1;padding:13px;font-size:12px;}
+.ghostbtn{font-family:'Jua';font-size:13px;background:#fff;border:2px solid var(--grey);color:var(--grey);border-radius:14px;padding:0 12px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.12);white-space:nowrap;}
+.ghostbtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.12);}
+.navbtns{display:flex;gap:8px;}
+.bigbtn{width:100%;font-family:'Press Start 2P';font-size:12px;color:#fff;background:var(--green);border:3px solid var(--deep);
+  border-radius:16px;padding:15px;cursor:pointer;box-shadow:0 5px 0 var(--deep);letter-spacing:1px;}
+.bigbtn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--deep);}
+.bigbtn.gold{background:var(--gold);color:#7a4d00;} .bigbtn.blue{background:var(--blue);} .bigbtn.purple{background:var(--purple);}
+.bigbtn.sm{flex:0 0 auto;width:auto;padding:15px 16px;}
+.bigbtn:disabled{opacity:.4;}
+
+/* combo & floating */
+.combo{position:fixed;left:50%;top:36%;transform:translate(-50%,-50%) scale(0);z-index:60;pointer-events:none;
+  font-family:'Press Start 2P';font-size:28px;color:var(--gold);text-shadow:3px 3px 0 var(--deep),0 0 18px #ffe680;text-align:center;}
+.combo.go{animation:comboPop 1s cubic-bezier(.2,1.5,.4,1);}
+@keyframes comboPop{0%{transform:translate(-50%,-50%) scale(0) rotate(-12deg)}40%{transform:translate(-50%,-50%) scale(1.12) rotate(6deg)}70%{transform:translate(-50%,-50%) scale(1) rotate(0)}100%{opacity:0;transform:translate(-50%,-120%) scale(1)}}
+.float{position:fixed;z-index:60;font-family:'Press Start 2P';font-size:17px;color:var(--gold2);text-shadow:2px 2px 0 #fff;pointer-events:none;animation:floatUp 1s ease-out forwards;}
+@keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(.6)}20%{opacity:1;transform:translateY(-6px) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(1)}}
+.flycoin{position:fixed;z-index:59;width:21px;height:21px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 35% 30%,#fff2a8,var(--gold) 55%,var(--gold2));border:2px solid #c98a00;}
+
+/* screens */
+.screen{display:none;} .screen.active{display:block;animation:fadein .35s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+
+/* ===== HOME ===== */
+.logo{text-align:center;margin:8px 0 4px;}
+.logo .lt{font-family:'Press Start 2P';font-size:26px;color:#fff;line-height:1.5;text-shadow:3px 3px 0 var(--deep),0 0 2px var(--deep);}
+.logo .lt .them{color:var(--gold);}
+.logo .sub{font-family:'Press Start 2P';font-size:10px;color:var(--deep);margin-top:8px;letter-spacing:1px;}
+.wallet{display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0 2px;font-family:'Press Start 2P';font-size:16px;color:var(--deep);}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0;}
+.tile{background:var(--card);border:4px solid var(--deep);border-radius:20px;padding:16px 8px;text-align:center;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.18);transition:transform .08s;}
+.tile:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+.tile .ic{font-size:38px;line-height:1;}
+.tile .tt{font-family:'Jua';font-size:17px;margin-top:8px;color:var(--deep);}
+.tile .td{font-size:10.5px;color:var(--grey);margin-top:5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tile.q{background:#eafff1;} .tile.l{background:#f3ecff;} .tile.m{background:#fff0f0;} .tile.t{background:#fff8e0;}
+.tile.d{background:#e6f4ff;} .tile.s{background:#fff0f8;} .tile.r{background:#fff6e6;}
+.blankslot{display:inline-block;min-width:96px;border-bottom:4px dotted var(--green);vertical-align:bottom;height:22px;margin:0 4px;}
+.dictsent{font-size:19px;line-height:1.85;color:var(--deep);font-weight:700;}
+.situq{font-size:17px;line-height:1.7;color:var(--deep);font-weight:700;background:#fff6fb;border:3px dashed var(--pink,#f0a);border-radius:14px;padding:12px 14px;}
+.demo-banner{background:#eafff1;border:2px solid var(--green2);border-radius:14px;padding:10px 12px;font-size:13.5px;color:#1c6b45;margin-top:6px;line-height:1.5;text-align:center;}
+.homerank{margin-top:12px;background:#fffdf6;border:2px solid var(--gold2);border-radius:14px;padding:10px 13px;box-shadow:0 3px 0 rgba(0,0,0,.08);}
+.homerank .hr-h{font-family:'Press Start 2P';font-size:9px;color:#c98a00;text-align:center;margin-bottom:9px;letter-spacing:.5px;}
+.homerank ol{list-style:none;margin:0;padding:0;}
+.homerank li{display:flex;align-items:center;gap:9px;font-size:14px;padding:5px 3px;}
+.homerank li+li{border-top:1px dashed #f0e4c0;}
+.homerank li .rk{min-width:20px;text-align:center;font-size:15px;}
+.homerank li .nm{flex:1;font-weight:bold;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.homerank li .sc{font-family:'Press Start 2P';font-size:10px;color:var(--green);}
+.homerank .hr-more{text-align:center;margin-top:8px;}
+.homerank .hr-more button{font-family:'Jua';font-size:12.5px;color:var(--purple);background:none;border:none;cursor:pointer;text-decoration:underline;}
+.homerank .hr-empty{text-align:center;font-size:12.5px;color:var(--grey);padding:4px;}
+#homeRankCoin{border-color:var(--green2);}
+#homeRankCoin .hr-h{color:var(--green);}
+.hr-morewrap{text-align:center;margin-top:10px;}
+.hr-morebtn{font-family:'Jua';font-size:12.5px;color:var(--purple);background:none;border:none;cursor:pointer;text-decoration:underline;}
+.studybtn{width:100%;font-family:'Jua';font-size:15px;color:var(--deep);background:#fff;border:3px solid var(--deep);border-radius:16px;padding:13px;cursor:pointer;box-shadow:0 5px 0 var(--deep);margin:12px 0 4px;}
+.studybtn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--deep);}
+.tabs{display:flex;gap:8px;margin:6px 0 12px;}
+.tab{flex:1;font-family:'Jua';font-size:14px;padding:11px;border:3px solid var(--deep);border-radius:12px;background:#fff;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.15);color:var(--grey);}
+.tab.on{background:var(--green2);color:var(--deep);box-shadow:0 3px 0 #1c8f4d;}
+.studylist{display:grid;gap:10px;}
+.scard{background:var(--card);border:3px solid var(--deep);border-radius:16px;padding:12px 13px;box-shadow:0 4px 0 rgba(0,0,0,.14);}
+.scard .sen{font-weight:bold;color:var(--deep);font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.scard .sko{color:var(--ink);font-size:14.5px;margin-top:4px;}
+.scard .sex{color:var(--grey);font-size:13.5px;margin-top:8px;border-top:1px dashed var(--line);padding-top:8px;line-height:1.45;}
+.scard .sday{font-family:'Press Start 2P';font-size:7px;color:#fff;background:var(--blue);border-radius:10px;padding:4px 6px;}
+.studyempty{text-align:center;color:var(--grey);font-size:15px;padding:34px 10px;line-height:1.6;}
+.clearwrong{font-family:'Jua';font-size:12px;background:#fff;border:2px solid var(--red);color:var(--red);border-radius:10px;padding:6px 11px;cursor:pointer;margin-bottom:10px;box-shadow:0 2px 0 rgba(0,0,0,.1);}
+
+/* ===== MATCH ===== */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:6px;}
+.mcard{aspect-ratio:3/4;border-radius:14px;cursor:pointer;position:relative;perspective:600px;}
+.mcard .inner{position:absolute;inset:0;transition:transform .4s;transform-style:preserve-3d;}
+.mcard.flip .inner,.mcard.matched .inner{transform:rotateY(180deg);}
+.mface{position:absolute;inset:0;backface-visibility:hidden;border:3px solid var(--deep);border-radius:14px;display:grid;place-items:center;padding:6px;text-align:center;box-shadow:0 4px 0 rgba(0,0,0,.15);}
+.mface.back{background:linear-gradient(135deg,var(--green2),var(--green));color:#fff;font-family:'Press Start 2P';font-size:20px;}
+.mface.front{background:#fff;transform:rotateY(180deg);font-size:14px;color:var(--ink);word-break:keep-all;line-height:1.25;font-family:'Jua','Gaegu';}
+.mface.front.en{font-weight:bold;color:var(--deep);}
+.mcard.matched .mface.front{background:#e6ffef;border-color:var(--ok);}
+.mcard.matched{animation:sbounce .5s ease;}
+
+/* ===== RESULT ===== */
+.result{text-align:center;}
+.medal{font-size:74px;line-height:1;margin:6px 0;animation:sbounce 1s ease infinite;}
+.result h2{font-family:'Press Start 2P';font-size:17px;color:var(--deep);margin:6px 0 2px;}
+.stars{font-size:38px;letter-spacing:4px;margin:6px 0;}
+.result .big{font-family:'Press Start 2P';font-size:24px;color:var(--gold2);text-shadow:1px 1px 0 var(--deep);}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.stat{background:#fff;border:3px solid var(--deep);border-radius:14px;padding:12px;box-shadow:0 4px 0 rgba(0,0,0,.14);}
+.stat .n{font-family:'Press Start 2P';font-size:16px;color:var(--green);} .stat .l{font-size:12.5px;color:var(--grey);margin-top:4px;}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:50;}
+.footer{text-align:center;font-size:11px;color:#7f8c84;margin-top:20px;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <!-- ============ HOME ============ -->
+  <!-- ============ NICKNAME GATE (첫 진입) ============ -->
+  <section id="nickGate" class="screen">
+    <div class="logo" style="margin-top:26px">
+      <div class="lt">The <span class="them">LET&nbsp;THEM</span> Theory</div>
+      <div class="sub">COIN QUEST · WEEK 5</div>
+    </div>
+    <div class="startcard" style="margin-top:10px">
+      <div class="sophie-stage" style="min-height:112px">
+        <div class="bubble show" style="max-width:210px">반가워요! 🎉<br>어떻게 불러드릴까요?</div>
+        <div id="ngSophie" class="sophie" style="width:84px;height:98px"></div>
+      </div>
+      <p style="text-align:center;font-size:15.5px;color:var(--ink);margin:6px 0 2px">닉네임을 정해 주세요</p>
+      <p style="text-align:center;font-size:13.5px;color:var(--grey);margin:2px 0 12px">모은 코인과 타임어택 점수가 이 이름으로 랭킹에 올라가요 🏆</p>
+      <input id="ngNick" maxlength="12" placeholder="예) 쏘피짱, Jenny" style="width:100%;font-family:'Jua';font-size:17px;padding:13px;border:3px solid var(--deep);border-radius:14px;outline:none;margin-bottom:6px;text-align:center" />
+      <div id="ngMsg" style="text-align:center;font-size:13px;color:var(--red);min-height:18px;margin-bottom:6px"></div>
+      <button class="bigbtn gold" id="ngStart">시작하기 🚀</button>
+    </div>
+    <div class="footer">© 2026 Sophie English 쏘피잉글리쉬</div>
+  </section>
+
+  <section id="home" class="screen active">
+    <div class="topbar">
+      <div class="coinbox"><div class="coin spin">$</div><span id="walletTop">0</span></div>
+      <button class="iconbtn" id="resetCoins" title="내 코인 초기화" style="font-size:14px;min-width:34px;margin-left:6px">🔄</button>
+      <div class="grow"></div>
+      <button class="soundbtn on" id="muteBtn0" title="소리 켜기/끄기">🔊 ON</button>
+    </div>
+    <div class="logo">
+      <div class="lt">The <span class="them">LET&nbsp;THEM</span> Theory</div>
+      <div class="sub">COIN QUEST · WEEK 5</div>
+    </div>
+    <div style="text-align:center;margin:-4px 0 2px"><span id="nickChip" style="display:none;font-family:'Jua';font-size:14px;background:#eafff1;border:3px solid var(--deep);border-radius:999px;padding:5px 12px;color:var(--deep)"></span></div>
+    <div class="sophie-stage" style="min-height:112px">
+      <div id="homeBubble" class="bubble show" style="max-width:210px">Hi, It's <b>Sophie</b>!<br>Let's review together 👋</div>
+      <div id="homeSophie" class="sophie"></div>
+    </div>
+    <div class="tiles">
+      <div class="tile q" data-mode="quest"><div class="ic">🎯</div><div class="tt">뜻 퀘스트</div><div class="td">영작까지 하면 코인 ×2!</div></div>
+      <div class="tile t" data-mode="time"><div class="ic">⏱️</div><div class="tt">타임어택</div><div class="td">30초! 랭킹 자동 등록 🏆</div></div>
+      <div class="tile l" data-mode="listen"><div class="ic">🔊</div><div class="tt">듣고 맞히기</div><div class="td">발음 듣고 뜻 고르기</div></div>
+      <div class="tile d" data-mode="dict"><div class="ic">🎧</div><div class="tt">받아쓰기</div><div class="td">듣고 빈칸 채우기</div></div>
+      <div class="tile s" data-mode="situ"><div class="ic">💬</div><div class="tt">이럴 땐 뭐라고?</div><div class="td">상황에 맞는 표현 고르기</div></div>
+      <div class="tile r" data-mode="room"><div class="ic">📚</div><div class="tt">나의 서재</div><div class="td">맞힐 때마다 방을 꾸며요 🛏️</div></div>
+    </div>
+    <button class="studybtn" id="openStudy">📖 전체 표현 보기 · 복습 노트</button>
+    <div class="demo-banner">📘 <b>5주차 교재</b> + <b>DAY20~23</b> 학습자료 · 표현·패턴·단어 63개 &nbsp;+&nbsp; 🎧받아쓰기 13 · 💬상황응답 12</div>
+    <div class="homerank" id="homeRankTime" style="display:none">
+      <div class="hr-h">🏆 타임어택 랭킹 TOP 3</div>
+      <ol id="homeRankTimeList"></ol>
+    </div>
+    <div class="homerank" id="homeRankCoin" style="display:none">
+      <div class="hr-h">🪙 코인 랭킹 TOP 3</div>
+      <ol id="homeRankCoinList"></ol>
+    </div>
+    <div class="hr-morewrap" id="homeRankMoreWrap" style="display:none"><button class="hr-morebtn" id="homeRankMore">🏆 타임어택 전체 랭킹 보기</button></div>
+    <div class="footer">© 2026 Sophie English 쏘피잉글리쉬</div>
+  </section>
+
+  <!-- ============ QUEST / LISTEN (shared) ============ -->
+  <section id="ql" class="screen">
+    <div class="topbar">
+      <button class="iconbtn" id="qlHome">홈</button>
+      <div class="coinbox"><div class="coin spin" id="qlCoin">$</div><span id="qlWallet">0</span></div>
+      <div class="grow"></div>
+      <div class="pill" id="qlCombo">COMBO 0</div>
+      <button class="soundbtn on" id="muteBtn1">🔊 ON</button>
+    </div>
+    <div class="prog"><i id="qlProg"></i></div>
+    <div class="stagelabel" id="qlStage">STAGE 1 / 8</div>
+    <div class="sophie-stage">
+      <div id="qlBubble" class="bubble"></div>
+      <div id="qlSophie" class="sophie"></div>
+    </div>
+    <div class="card">
+      <span class="qtag" id="qlTag">EXPRESSION</span>
+      <p class="qprompt" id="qlPrompt"></p>
+      <button class="listenbtn" id="qlListen" style="display:none"><span class="spk">🔊</span> 다시 듣기</button>
+      <div class="showtext" id="qlShowText" style="display:none">🔇 소리가 안 들리면 · 영어 표현 보기</div>
+      <div class="qmain" id="qlMain"></div>
+      <div class="opts" id="qlOpts"></div>
+      <div class="answerbar" id="qlAnswer">
+        <div class="compo" id="compo" style="display:none">
+          <div class="compo-head">✍️ 보너스 영작! <span>맞히면 이 문제 코인 <b>×2</b></span></div>
+          <div class="compo-guide">👆 아래 단어를 <b>탭</b>하면 순서대로 채워져요. 중간에 끼워넣으려면 단어를 <b>드래그</b>! 다시 하려면 <b>↺ 처음부터</b>.</div>
+          <div class="compo-ko" id="compoKo"></div>
+          <div class="compo-answer" id="compoAnswer"></div>
+          <button class="resetbtn" id="compoReset">↺ 처음부터</button>
+          <div class="compo-bank" id="compoBank"></div>
+          <div class="compo-msg" id="compoMsg"></div>
+          <div class="compo-btns">
+            <button class="bigbtn gold" id="compoCheck">완성! ✓</button>
+            <button class="ghostbtn" id="compoSkip">영작 없이 넘어가기 ⏭️</button>
+          </div>
+        </div>
+        <div class="reveal" id="qlReveal"></div>
+        <div class="navbtns">
+          <button class="bigbtn sm blue" id="qlPrev">이전</button>
+          <button class="bigbtn" id="qlNext">다음 ▶</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer">쏘피쌤과 함께하는 복습 퀴즈~!</div>
+  </section>
+
+  <!-- ============ 📚 나의 서재 ============ -->
+  <section id="roomPick" class="screen">
+    <div class="topbar">
+      <button class="iconbtn" id="rpHome">홈</button>
+      <div class="coinbox"><div class="coin spin">$</div><span id="rpWallet">0</span></div>
+      <div class="grow"></div>
+      <button class="soundbtn on" id="muteBtn7">🔊 ON</button>
+    </div>
+    <div class="startcard" style="margin-top:12px">
+      <div class="retro" style="font-size:16px;color:var(--deep);text-align:center;margin-bottom:2px">📚 나의 서재</div>
+      <p style="text-align:center;font-size:14.5px;color:var(--grey);margin:4px 0 2px" id="rpHi">함께 공부할 캐릭터를 골라주세요!</p>
+      <div class="rp-tabs">
+        <button class="rp-tab on" id="rpTabF" data-sex="f">👧 여자</button>
+        <button class="rp-tab" id="rpTabM" data-sex="m">👦 남자</button>
+      </div>
+      <div class="rp-grid" id="rpGrid"></div>
+      <button class="bigbtn gold" id="rpStart" style="margin-top:14px">이 캐릭터로 시작! 🚀</button>
+    </div>
+    <div class="footer">© 2026 Sophie English 쏘피잉글리쉬</div>
+  </section>
+
+  <section id="room" class="screen">
+    <div class="topbar">
+      <button class="iconbtn" id="rmHome">홈</button>
+      <div class="coinbox"><div class="coin spin" id="rmCoin">$</div><span id="rmWallet">0</span></div>
+      <div class="grow"></div>
+      <div class="pill" id="rmBooks">📚 0</div>
+      <button class="soundbtn on" id="muteBtn8">🔊 ON</button>
+    </div>
+    <div class="rm-title" id="rmTitle">내 방 · 1 / 10</div>
+    <div class="rm-scene">
+      <svg id="roomSvg" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="320" height="150" fill="#fdf1e0"/>
+        <g fill="#f2decd"><circle cx="24" cy="104" r="3"/><circle cx="70" cy="126" r="3"/><circle cx="150" cy="14" r="3"/><circle cx="196" cy="96" r="3"/><circle cx="118" cy="96" r="3"/><circle cx="250" cy="16" r="3"/><circle cx="290" cy="26" r="3"/></g>
+        <rect x="0" y="150" width="320" height="50" fill="#e9c396"/>
+        <rect x="0" y="146" width="320" height="6" fill="#c8996a"/>
+        <path d="M40,152 V200 M110,152 V200 M180,152 V200 M250,152 V200" stroke="#d9ae7e" stroke-width="2"/>
+        <rect x="30" y="24" width="76" height="56" rx="4" fill="#bfe6ff" stroke="#3a3a38" stroke-width="3"/>
+        <path d="M68,24 V80 M30,52 H106" stroke="#3a3a38" stroke-width="3"/>
+        <circle cx="90" cy="38" r="7" fill="#fff6c8"/>
+        <rect x="24" y="80" width="88" height="6" rx="2" fill="#d8b98a" stroke="#3a3a38" stroke-width="2"/>
+        <g id="ri-curtain" class="ritem" style="display:none">
+          <rect x="18" y="14" width="100" height="5" rx="2" fill="#a5713f" stroke="#3a3a38" stroke-width="2"/>
+          <path d="M22,18 q10,32 3,68 h18 q-7,-36 1,-68 z" fill="#f4a6a6" stroke="#3a3a38" stroke-width="2"/>
+          <path d="M114,18 q-10,32 -3,68 h-18 q7,-36 -1,-68 z" fill="#f4a6a6" stroke="#3a3a38" stroke-width="2"/>
+        </g>
+        <g id="ri-clothes" class="ritem" style="display:none">
+          <rect x="2" y="28" width="22" height="4" rx="2" fill="#a5713f" stroke="#3a3a38" stroke-width="2"/>
+          <path d="M13,32 l-6,18 q0,10 6,10 q6,0 6,-10 l-6,-18 z" fill="#f0a6c8" stroke="#3a3a38" stroke-width="2"/>
+        </g>
+        <g id="ri-frame" class="ritem" style="display:none">
+          <rect x="128" y="22" width="48" height="38" rx="3" fill="#fff6e0" stroke="#3a3a38" stroke-width="3"/>
+          <path d="M132,55 l13,-17 l9,11 l8,-9 l11,15 z" fill="#8fd0a8"/>
+          <circle cx="163" cy="33" r="4.5" fill="#ffd98a"/>
+        </g>
+        <g id="ri-clock" class="ritem" style="display:none">
+          <circle cx="192" cy="34" r="14" fill="#fff" stroke="#3a3a38" stroke-width="3"/>
+          <path d="M192,34 V25 M192,34 l7,4" stroke="#3a3a38" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+        <rect x="210" y="40" width="96" height="110" rx="4" fill="#c1834a" stroke="#3a3a38" stroke-width="3"/>
+        <rect x="214" y="44" width="88" height="102" fill="#8f5f34"/>
+        <rect x="214" y="72" width="88" height="5" fill="#c1834a"/>
+        <rect x="214" y="106" width="88" height="5" fill="#c1834a"/>
+        <g id="bookG"></g>
+        <g id="ri-bed" class="ritem" style="display:none">
+          <rect x="6" y="112" width="80" height="38" rx="6" fill="#cfe6f7" stroke="#3a3a38" stroke-width="3"/>
+          <rect x="10" y="116" width="24" height="16" rx="4" fill="#ffffff" stroke="#3a3a38" stroke-width="2"/>
+          <rect x="37" y="118" width="45" height="28" rx="4" fill="#7fb8e8" stroke="#3a3a38" stroke-width="2"/>
+        </g>
+        <g id="ri-lamp" class="ritem" style="display:none">
+          <ellipse cx="98" cy="150" rx="11" ry="4" fill="#8a8a86" stroke="#3a3a38" stroke-width="2"/>
+          <rect x="96" y="104" width="4" height="46" fill="#8a8a86"/>
+          <path d="M85,104 L111,104 L105,84 L91,84 Z" fill="#ffd98a" stroke="#3a3a38" stroke-width="2.5"/>
+        </g>
+        <g id="ri-desk" class="ritem" style="display:none">
+          <rect x="110" y="112" width="78" height="9" rx="3" fill="#d9a15c" stroke="#3a3a38" stroke-width="3"/>
+          <rect x="114" y="121" width="7" height="29" fill="#c08b48" stroke="#3a3a38" stroke-width="2"/>
+          <rect x="177" y="121" width="7" height="29" fill="#c08b48" stroke="#3a3a38" stroke-width="2"/>
+        </g>
+        <g id="ri-computer" class="ritem" style="display:none">
+          <rect x="128" y="84" width="44" height="28" rx="3" fill="#4a5a6a" stroke="#3a3a38" stroke-width="2.5"/>
+          <rect x="132" y="88" width="36" height="20" rx="2" fill="#9fd8ff"/>
+        </g>
+        <g id="ri-pencil" class="ritem" style="display:none">
+          <path d="M176,100 l2,-14 M180,100 l1,-16 M184,100 l3,-13" stroke="#e08a5a" stroke-width="3" stroke-linecap="round"/>
+          <rect x="173" y="99" width="16" height="13" rx="2" fill="#8fd0a8" stroke="#3a3a38" stroke-width="2"/>
+        </g>
+        <g id="ri-chair" class="ritem" style="display:none">
+          <rect x="188" y="119" width="21" height="7" rx="2" fill="#8fd0a8" stroke="#3a3a38" stroke-width="2"/>
+          <rect x="203" y="96" width="6" height="25" rx="2" fill="#8fd0a8" stroke="#3a3a38" stroke-width="2"/>
+          <rect x="190" y="126" width="4" height="24" fill="#6bb98c"/>
+          <rect x="203" y="126" width="4" height="24" fill="#6bb98c"/>
+        </g>
+        <g id="ri-rug" class="ritem" style="display:none">
+          <ellipse cx="150" cy="176" rx="66" ry="18" fill="#f6d3a8" stroke="#3a3a38" stroke-width="3"/>
+          <ellipse cx="150" cy="176" rx="44" ry="11" fill="none" stroke="#e0ab72" stroke-width="3"/>
+        </g>
+        <g id="ri-console" class="ritem" style="display:none">
+          <rect x="38" y="164" width="36" height="21" rx="5" fill="#5a6cf0" stroke="#3a3a38" stroke-width="2.5"/>
+          <circle cx="47" cy="174" r="3.2" fill="#fff"/><circle cx="65" cy="171" r="2.6" fill="#ffd98a"/><circle cx="65" cy="178" r="2.6" fill="#f08a8a"/>
+        </g>
+        <g id="ri-plant" class="ritem" style="display:none">
+          <path d="M258,160 q-16,-14 -12,-32 q11,7 12,19 q2,-17 13,-23 q4,20 -13,36 z" fill="#5fbf7d" stroke="#3a3a38" stroke-width="2"/>
+          <path d="M246,158 h24 l-3,24 h-18 z" fill="#e08a5a" stroke="#3a3a38" stroke-width="2.5"/>
+        </g>
+        <g id="ri-cat" class="ritem" style="display:none">
+          <path d="M192,172 q-11,-3 -8,-14" stroke="#3a3a38" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+          <ellipse cx="207" cy="172" rx="16" ry="9" fill="#f0c9a0" stroke="#3a3a38" stroke-width="2.5"/>
+          <path d="M215,158 l0,-8 l7,5 z M228,158 l1,-8 l-7,4 z" fill="#f0c9a0" stroke="#3a3a38" stroke-width="2"/>
+          <circle cx="221" cy="162" r="9" fill="#f0c9a0" stroke="#3a3a38" stroke-width="2.5"/>
+          <circle cx="218" cy="162" r="1.6" fill="#3a3a38"/><circle cx="224" cy="162" r="1.6" fill="#3a3a38"/>
+        </g>
+        <g id="charG" transform="translate(96,126)"></g>
+      </svg>
+    </div>
+    <div class="rm-info" id="rmInfo"></div>
+    <div class="prog"><i id="rmProg"></i></div>
+    <div class="card" id="rmQuizCard">
+      <span class="qtag" id="rmTag">EXPRESSION</span>
+      <p class="qprompt" id="rmPrompt"></p>
+      <button class="listenbtn" id="rmListen" style="display:none"><span class="spk">🔊</span> 다시 듣기</button>
+      <div class="qmain" id="rmMain"></div>
+      <div class="opts" id="rmOpts"></div>
+      <div class="answerbar" id="rmAnswer">
+        <div class="rm-pick" id="rmPick" style="display:none">
+          <div class="rm-pick-h">🎁 아이템을 하나 골라 방에 놓아보자!</div>
+          <div class="rm-pick-btns" id="rmPickBtns"></div>
+        </div>
+        <div class="reveal" id="rmReveal"></div>
+        <div class="navbtns"><button class="bigbtn" id="rmNext">다음 ▶</button></div>
+      </div>
+    </div>
+    <div class="card rm-done" id="rmDoneCard" style="display:none">
+      <div class="t" id="rmDoneTitle">오늘의 서재 완성! 📚</div>
+      <div class="bd" id="rmDoneBody"></div>
+      <button class="bigbtn gold" id="rmAgain">한 판 더! 🚀</button>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="ghostbtn" id="rmChangeChar" style="flex:1">🧑 캐릭터 바꾸기</button>
+        <button class="ghostbtn" id="rmReset" style="flex:1">🔄 방 새로 꾸미기</button>
+      </div>
+      <div style="margin-top:10px"><button class="bigbtn sm blue" id="rmDoneHome">홈으로</button></div>
+    </div>
+    <div class="footer">쏘피쌤과 함께하는 복습 퀴즈~!</div>
+  </section>
+
+  <!-- ============ ⚡ 맞아? 틀려? (SPEED MATCH) ============ -->
+  <section id="swipe" class="screen">
+    <div class="topbar">
+      <button class="iconbtn" id="swHome">홈</button>
+      <div class="coinbox"><div class="coin spin" id="swCoin">$</div><span id="swWallet">0</span></div>
+      <div class="grow"></div>
+      <div class="pill" id="swCombo">COMBO 0</div>
+      <button class="soundbtn on" id="muteBtn6">🔊 ON</button>
+    </div>
+    <div class="prog"><i id="swProg"></i></div>
+    <div class="sw-left" id="swLeft">1 / 15</div>
+    <div class="sw-streak" id="swStreak"></div>
+    <div class="sophie-stage" style="min-height:104px">
+      <div id="swBubble" class="bubble"></div>
+      <div id="swSophie" class="sophie" style="width:76px;height:90px"></div>
+    </div>
+    <div class="sw-wrap">
+      <div class="sw-ghost g2"></div><div class="sw-ghost g1"></div>
+      <div class="sw-card" id="swCard">
+        <div class="sw-en" id="swEn"></div>
+        <div class="sw-eq">= = =</div>
+        <div class="sw-ko" id="swKo"></div>
+      </div>
+    </div>
+    <div class="sw-btns">
+      <button class="sw-btn sw-no" id="swNo">❌ 틀려!</button>
+      <button class="sw-btn sw-yes" id="swYes">⭕ 맞아!</button>
+    </div>
+    <div class="sw-msg" id="swMsg">이 짝이 맞을까? 3초 안에 골라봐!</div>
+    <div class="footer">쏘피쌤과 함께하는 복습 퀴즈~!</div>
+  </section>
+
+  <!-- ============ MATCH ============ -->
+  <section id="match" class="screen">
+    <div class="topbar">
+      <button class="iconbtn" id="mHome">홈</button>
+      <div class="coinbox"><div class="coin spin">$</div><span id="mWallet">0</span></div>
+      <div class="grow"></div>
+      <div class="pill" id="mInfo">⏱️ 0s</div>
+      <button class="soundbtn on" id="muteBtn2">🔊 ON</button>
+    </div>
+    <div class="stagelabel">🃏 짝 맞추기 — 영어와 뜻을 짝지어봐!</div>
+    <div class="sophie-stage" style="min-height:100px">
+      <div id="mBubble" class="bubble show" style="max-width:210px">같은 짝을 찾아 뒤집어봐! 🃏</div>
+      <div id="mSophie" class="sophie" style="width:78px;height:92px"></div>
+    </div>
+    <div class="grid" id="mGrid"></div>
+    <div class="footer">쏘피쌤과 함께하는 복습 퀴즈~!</div>
+  </section>
+
+  <!-- ============ TIME ATTACK START (닉네임) ============ -->
+  <section id="timeStart" class="screen">
+    <div class="topbar">
+      <button class="iconbtn" id="tsHome">홈</button>
+      <div class="coinbox"><div class="coin spin">$</div><span id="tsWallet">0</span></div>
+      <div class="grow"></div>
+      <button class="soundbtn on" id="muteBtn5">🔊 ON</button>
+    </div>
+    <div class="startcard" style="margin-top:14px">
+      <div class="retro" style="font-size:20px;color:var(--deep);text-align:center;margin-bottom:4px">⏱️ 타임어택</div>
+      <div class="sophie-stage" style="min-height:108px">
+        <div class="bubble show" style="max-width:200px" id="tsBubble">준비됐어? 시작하자! 🏆</div>
+        <div id="tsSophie" class="sophie" style="width:80px;height:94px"></div>
+      </div>
+      <p style="text-align:center;font-size:15px;color:var(--ink);margin:4px 0 2px">30초 안에 최대한 많이 맞혀봐!</p>
+      <p style="text-align:center;font-size:14.5px;color:var(--green);font-weight:bold;margin:2px 0 12px">🏆 끝까지 하면 내 점수가 랭킹에 자동 등록돼요!</p>
+      <div id="tsWho" style="text-align:center;font-family:'Jua';font-size:15px;color:var(--deep);margin-bottom:10px"></div>
+      <button class="bigbtn gold" id="tsStart">시작! 🚀</button>
+      <div style="text-align:center;margin-top:10px"><button class="ghostbtn" id="tsRank">🏆 지금 랭킹 보기</button></div>
+    </div>
+    <div class="footer">쏘피쌤과 함께하는 복습 퀴즈~!</div>
+  </section>
+
+  <!-- ============ TIME ATTACK ============ -->
+  <section id="time" class="screen">
+    <div class="topbar">
+      <button class="iconbtn" id="tHome">홈</button>
+      <div class="coinbox"><div class="coin spin" id="tCoin">$</div><span id="tWallet">0</span></div>
+      <div class="grow"></div>
+      <div class="pill" id="tCombo">COMBO 0</div>
+      <button class="soundbtn on" id="muteBtn3">🔊 ON</button>
+    </div>
+    <div class="prog time"><i id="tProg" style="width:100%"></i></div>
+    <div class="stagelabel" id="tTimeLbl">⏱️ 30.0s</div>
+    <div class="sophie-stage" style="min-height:100px">
+      <div id="tBubble" class="bubble" style="max-width:200px"></div>
+      <div id="tSophie" class="sophie" style="width:78px;height:92px"></div>
+    </div>
+    <div class="card">
+      <span class="qtag sup" id="tTag">SPEED</span>
+      <p class="qprompt" id="tPrompt">이 뜻의 영어 표현은? (빠르게!)</p>
+      <div class="qmain" id="tMain"></div>
+      <div class="opts" id="tOpts"></div>
+    </div>
+    <div class="footer">⏱️ 빠를수록 코인이 커져요!</div>
+  </section>
+
+  <!-- ============ STUDY (복습 노트) ============ -->
+  <section id="study" class="screen">
+    <div class="topbar">
+      <button class="iconbtn" id="sHome">홈</button>
+      <div class="coinbox"><div class="coin spin">$</div><span id="sWallet">0</span></div>
+      <div class="grow"></div>
+      <button class="soundbtn on" id="muteBtn4">🔊 ON</button>
+    </div>
+    <div class="stagelabel">📖 복습 노트</div>
+    <div class="tabs">
+      <button class="tab on" id="tabAll">전체 표현</button>
+      <button class="tab" id="tabWrong">틀린 것만 <span id="wrongCnt"></span></button>
+    </div>
+    <div id="clearWrongWrap" style="display:none;text-align:right"><button class="clearwrong" id="clearWrong">틀린 목록 비우기 🗑️</button></div>
+    <div class="studylist" id="studyList"></div>
+    <div class="footer">쏘피쌤과 함께하는 복습 퀴즈~!</div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section id="result" class="screen">
+    <div class="card result">
+      <div class="medal" id="rMedal">🏆</div>
+      <h2 id="rTitle">CLEAR!</h2>
+      <div class="stars" id="rStars">⭐⭐⭐</div>
+      <div class="sophie-stage" style="min-height:112px">
+        <div id="rBubble" class="bubble show">정말 잘했어! 👏👏</div>
+        <div id="rSophie" class="sophie"></div>
+      </div>
+      <div class="big">+<span id="rCoins">0</span> COINS</div>
+      <div class="statgrid">
+        <div class="stat"><div class="n" id="rS1">0</div><div class="l" id="rL1">정답률</div></div>
+        <div class="stat"><div class="n" id="rS2">0</div><div class="l" id="rL2">최고 콤보</div></div>
+      </div>
+      <div class="rankbox" id="rankBox" style="display:none">
+        <div class="rankhead">🏆 타임어택 랭킹 TOP</div>
+        <div class="rankform">
+          <input id="nickInput" maxlength="12" placeholder="닉네임 입력" />
+          <button class="bigbtn sm purple" id="submitScore">등록</button>
+        </div>
+        <div class="rankstatus" id="rankStatus"></div>
+        <ol class="ranklist" id="rankList"></ol>
+        <div style="text-align:center;margin-top:8px"><button class="clearwrong" id="deleteMyRank" style="display:none">🗑️ 내 기록 삭제 (새 닉네임으로 재도전)</button></div>
+      </div>
+      <button class="bigbtn gold" id="rAgain">🔁 다시 도전</button>
+      <button class="bigbtn blue" id="rHome" style="margin-top:10px">🏠 홈으로</button>
+    </div>
+    <div class="footer">지갑 코인: <b id="rWallet">0</b> 💰</div>
+  </section>
+
+</div>
+
+<script id="ITEMS" type="application/json">[
+ {
+  "en": "A is easier than B",
+  "ko": "A가 B보다 (더) 쉽다",
+  "cat": "교재",
+  "ex": "Discipline is easier than motivation.",
+  "exko": "규율(꾸준함)은 동기부여보다 쉽다."
+ },
+ {
+  "en": "fade with ~",
+  "ko": "~에 따라 사그라들다 · 약해지다",
+  "cat": "교재",
+  "day": "DAY22",
+  "ex": "Motivation fades with your mood.",
+  "exko": "동기는 기분에 따라 사그라들어요.",
+  "src": "Comparing yourself to others is a natural instinct; but when it consumes your thoughts, it undermines your confidence and motivation.",
+  "srcko": "자신을 남과 비교하는 건 자연스러운 본능이지만, 그것이 생각을 집어삼키면 자신감과 동기를 약화시킨다."
+ },
+ {
+  "en": "survive with ~",
+  "ko": "~와 함께 살아남다 · ~ 덕분에 버티다",
+  "cat": "교재",
+  "ex": "Discipline survives with your systems.",
+  "exko": "규율은 시스템과 함께 살아남아요."
+ },
+ {
+  "en": "ego depletion",
+  "ko": "의지력이 방전됨 (결정 피로)",
+  "cat": "교재",
+  "lit": "자아 고갈",
+  "ex": "By evening, ego depletion kicks in.",
+  "exko": "저녁쯤 되면 의지력이 방전돼 버려."
+ },
+ {
+  "en": "come up to + 사람",
+  "ko": "~에게 다가오다 · 다가와 말을 걸다",
+  "cat": "교재",
+  "ex": "Someone came up to me and asked for directions.",
+  "exko": "누군가 다가와 길을 물었어."
+ },
+ {
+  "en": "get tired of ~",
+  "ko": "~에 싫증나다 · 질리다 · 지치다",
+  "cat": "교재",
+  "day": "DAY15",
+  "ex": "I never get tired of watching the sunset.",
+  "exko": "노을은 아무리 봐도 안 질려.",
+  "src": "All of which would have left me feeling even more stressed out, more worked up, and more drained.",
+  "srcko": "그 모든 게 나를 훨씬 더 스트레스 받고, 더 안달나고, 더 진이 빠지게 만들었을 거예요."
+ },
+ {
+  "en": "keep your energy for ~",
+  "ko": "~을 위해 에너지를 아껴 두다",
+  "cat": "교재",
+  "day": "DAY22",
+  "ex": "Keep your energy for what really matters.",
+  "exko": "정말 중요한 일에 에너지를 아껴 둬.",
+  "src": "You take your time and your energy and use it to create the best chapter of your life.",
+  "srcko": "당신의 시간과 에너지를 가져다 당신 삶의 최고의 장을 만드는 데 쓴다."
+ },
+ {
+  "en": "counterintuitive",
+  "ko": "직관에 어긋나는 · 생각과 반대인",
+  "cat": "교재",
+  "ex": "But here's the counterintuitive truth.",
+  "exko": "하지만 여기 직관에 어긋나는 진실이 있어요."
+ },
+ {
+  "en": "willpower",
+  "ko": "의지력",
+  "cat": "교재",
+  "ex": "Discipline doesn't mean willpower.",
+  "exko": "규율은 의지력을 뜻하는 게 아니에요."
+ },
+ {
+  "en": "toughness",
+  "ko": "근성 · 강인함",
+  "cat": "교재",
+  "ex": "It's not about toughness, it's about design.",
+  "exko": "근성의 문제가 아니라, 설계의 문제예요."
+ },
+ {
+  "en": "design your life",
+  "ko": "삶을 설계하다 (시스템을 만들다)",
+  "cat": "교재",
+  "ex": "Discipline is designing your life.",
+  "exko": "규율이란 삶을 설계하는 거예요."
+ },
+ {
+  "en": "see / regard A as B",
+  "ko": "A를 B로 여기다 · 보다",
+  "cat": "패턴",
+  "day": "DAY20",
+  "ex": "She sees challenges as chances.",
+  "exko": "그녀는 도전을 기회로 여긴다.",
+  "src": "I saw other people's wins as my losses.",
+  "srcko": "나는 다른 사람들의 승리를 내 패배로 여겼다."
+ },
+ {
+  "en": "There is enough ~ to go around",
+  "ko": "모두에게 돌아갈 만큼 충분한 ~이 있다",
+  "cat": "패턴",
+  "day": "DAY20",
+  "ex": "There's enough food to go around.",
+  "exko": "모두가 먹을 만큼 음식이 충분해.",
+  "src": "There is enough happiness, success, friendship, and money to go around for absolutely everyone.",
+  "srcko": "정말 모든 사람에게 돌아갈 만큼 충분한 행복과 성공과 우정과 돈이 있다."
+ },
+ {
+  "en": "The problem is (that) 주어+동사",
+  "ko": "문제는 ~이다 / 문제는 ~하지 않는 것이다",
+  "cat": "패턴",
+  "day": "DAY20",
+  "ex": "The problem is we started too late.",
+  "exko": "문제는 우리가 너무 늦게 시작했다는 거야.",
+  "src": "The problem is you are not using comparison to your advantage.",
+  "srcko": "문제는 당신이 비교를 당신에게 유리하게 쓰지 않고 있다는 것이다."
+ },
+ {
+  "en": "make + 목적어 + feel + 형용사",
+  "ko": "~를 …한 기분이 들게 만들다",
+  "cat": "패턴",
+  "day": "DAY20",
+  "ex": "You make me feel safe.",
+  "exko": "너는 내가 안전하다고 느끼게 해.",
+  "src": "It will make you feel defeated before you even start.",
+  "srcko": "그것은 당신이 시작하기도 전에 패배감을 느끼게 만들 것이다."
+ },
+ {
+  "en": "flip / turn A into B",
+  "ko": "A를 B로 바꾸다 · 뒤집다",
+  "cat": "패턴",
+  "day": "DAY20",
+  "ex": "She turned her pain into art.",
+  "exko": "그녀는 자기 고통을 예술로 바꿨어.",
+  "src": "You will learn how to flip comparison from a major problem into your greatest teacher.",
+  "srcko": "당신은 비교를 큰 문제에서 가장 위대한 스승으로 뒤집는 법을 배우게 될 것이다."
+ },
+ {
+  "en": "It turns out (that) + 주어 + 동사",
+  "ko": "알고 보니 ~이다 · ~인 것으로 드러나다",
+  "cat": "패턴",
+  "day": "DAY21",
+  "ex": "It turned out to be a huge misunderstanding.",
+  "exko": "알고 보니 엄청난 오해였어.",
+  "src": "It turns out that there is someone in Molly's neighborhood that she's known for a long time.",
+  "srcko": "알고 보니 몰리의 동네에 그녀가 오래전부터 알던 어떤 사람이 있었다."
+ },
+ {
+  "en": "so + 형용사/부사 + that + 주어 + 동사",
+  "ko": "너무 ~해서 …하다 (결과)",
+  "cat": "패턴",
+  "day": "DAY21",
+  "ex": "I was so tired that I fell asleep instantly.",
+  "exko": "너무 피곤해서 바로 잠들었어.",
+  "src": "Maybe you've been so caught up in your day-to-day that you've ignored what's right in front of you.",
+  "srcko": "어쩌면 당신은 일상에 너무 사로잡혀 있어서 바로 눈앞의 것을 무시해 왔는지도 모른다."
+ },
+ {
+  "en": "be used to + -ing",
+  "ko": "~하는 데 익숙하다",
+  "cat": "패턴",
+  "day": "DAY21",
+  "ex": "I'm used to working late.",
+  "exko": "난 늦게까지 일하는 데 익숙해.",
+  "src": "Maybe you're so used to doing things the way you've always done them.",
+  "srcko": "어쩌면 당신은 늘 해오던 방식대로 일하는 데 너무 익숙해져서."
+ },
+ {
+  "en": "the way (in which) + 주어 + 동사",
+  "ko": "~하는 방식",
+  "cat": "패턴",
+  "day": "DAY21",
+  "ex": "I love the way she tells stories.",
+  "exko": "난 그녀가 이야기하는 방식이 좋아.",
+  "src": "The way in which the other woman was marketing herself was so impressive.",
+  "srcko": "그 여자가 자신을 마케팅하는 방식은 정말 인상적이었다."
+ },
+ {
+  "en": "There's a reason (why) + 주어 + 동사",
+  "ko": "~하는 데는 (다) 이유가 있다",
+  "cat": "패턴",
+  "day": "DAY21",
+  "ex": "There's a reason why I trust her.",
+  "exko": "내가 그녀를 믿는 데는 이유가 있어.",
+  "src": "There's a reason why this woman got under Molly's skin.",
+  "srcko": "이 여자가 몰리의 신경을 건드린 데는 이유가 있다."
+ },
+ {
+  "en": "This is why + 주어 + 동사",
+  "ko": "이것이 바로 ~한 이유다",
+  "cat": "패턴",
+  "day": "DAY22",
+  "ex": "This is why I never skip breakfast.",
+  "exko": "이것이 바로 내가 아침을 절대 거르지 않는 이유야.",
+  "src": "This is why anger is important.",
+  "srcko": "이것이 바로 분노가 중요한 이유다."
+ },
+ {
+  "en": "find oneself + -ing",
+  "ko": "자기도 모르게 ~하고 있다",
+  "cat": "패턴",
+  "day": "DAY22",
+  "ex": "I found myself smiling for no reason.",
+  "exko": "나는 이유 없이 미소 짓고 있는 나를 발견했어.",
+  "src": "I found myself going down a comparison spiral.",
+  "srcko": "나는 비교의 소용돌이로 빠져드는 나 자신을 발견했다."
+ },
+ {
+  "en": "have (got) to + 동사원형",
+  "ko": "~해야 한다 (의무·필요)",
+  "cat": "패턴",
+  "day": "DAY22",
+  "ex": "I have to finish this by tonight.",
+  "exko": "난 이걸 오늘 밤까지 끝내야 해.",
+  "src": "You have to show up every day and do the boring, irritating work.",
+  "srcko": "당신은 매일 나와서 지루하고 짜증나는 일을 해야 한다."
+ },
+ {
+  "en": "Every time + 주어 + 동사",
+  "ko": "~할 때마다 (= whenever)",
+  "cat": "패턴",
+  "day": "DAY22",
+  "ex": "Every time it rains, the roof leaks.",
+  "exko": "비가 올 때마다, 지붕이 새.",
+  "src": "Every time I left and went back to our house, I just felt discouraged.",
+  "srcko": "매번 그곳을 나서서 우리 집으로 돌아올 때마다, 나는 그저 낙담했다."
+ },
+ {
+  "en": "while + 주어 + 동사 (대조)",
+  "ko": "~하는 동안 · ~인 반면 (대조)",
+  "cat": "패턴",
+  "day": "DAY22",
+  "ex": "While I was sleeping, she finished the report.",
+  "exko": "내가 자고 있는 동안, 그녀는 보고서를 끝냈어.",
+  "src": "While Molly was making excuses, the other woman was researching and creating.",
+  "srcko": "몰리가 변명을 하고 있는 동안, 그 다른 여자는 조사하고 만들고 있었다."
+ },
+ {
+  "en": "Not only + 조동사/be + 주어 ~ (도치)",
+  "ko": "~일 뿐만 아니라 (게다가)",
+  "cat": "패턴",
+  "day": "DAY23",
+  "ex": "Not only did he apologize, he also paid for lunch.",
+  "exko": "그는 사과했을 뿐만 아니라, 점심값까지 냈어.",
+  "src": "Not only is she an incredible friend, she now has my dream home.",
+  "srcko": "그녀는 대단한 친구일 뿐만 아니라, 이제 내 꿈의 집까지 가졌다."
+ },
+ {
+  "en": "No wonder + 주어 + 동사",
+  "ko": "어쩐지 ~하더라 · ~하는 게 당연하다",
+  "cat": "패턴",
+  "day": "DAY23",
+  "ex": "No wonder you're tired — you barely slept.",
+  "exko": "어쩐지 너 피곤하더라 — 거의 못 잤잖아.",
+  "src": "No wonder my kids always wanted to go to my friend's house.",
+  "srcko": "어쩐지 우리 애들이 늘 친구네 집에 가고 싶어 하더라."
+ },
+ {
+  "en": "count on + 목적어 (+ -ing)",
+  "ko": "~을 믿다·의지하다·기대다",
+  "cat": "패턴",
+  "day": "DAY23",
+  "ex": "You can always count on me.",
+  "exko": "넌 언제든 날 믿어도 돼.",
+  "src": "I had counted on my husband being successful and providing me with support.",
+  "srcko": "나는 남편이 성공해서 나에게 뒷받침을 해 주기를 기대고 있었다."
+ },
+ {
+  "en": "It is your responsibility to + 동사원형",
+  "ko": "~하는 것은 당신의 몫(책임)이다",
+  "cat": "패턴",
+  "day": "DAY23",
+  "ex": "It's your responsibility to lock up at night.",
+  "exko": "밤에 문단속하는 건 네 몫이야.",
+  "src": "If you want financial success, it is your responsibility to create it.",
+  "srcko": "재정적 성공을 원한다면, 그것을 만들어 내는 것은 당신의 몫이다."
+ },
+ {
+  "en": "All (that) + 주어 + do is (+ 동사원형)",
+  "ko": "~가 하는 거라곤 …뿐이다",
+  "cat": "패턴",
+  "day": "DAY23",
+  "ex": "All I did was tell the truth.",
+  "exko": "내가 한 거라곤 진실을 말한 것뿐이야.",
+  "src": "If all you ever do is stay on the surface, you will never discover the deeper meaning.",
+  "srcko": "당신이 하는 거라곤 표면에 머무는 것뿐이라면, 당신은 결코 더 깊은 의미를 발견하지 못할 것이다."
+ },
+ {
+  "en": "beat someone to it",
+  "ko": "~보다 먼저 해내다 · 먼저 차지하다",
+  "cat": "단어",
+  "day": "DAY20",
+  "ex": "I wanted that seat, but she beat me to it.",
+  "exko": "그 자리 앉고 싶었는데, 그녀가 먼저 차지했어."
+ },
+ {
+  "en": "lead the way",
+  "ko": "앞장서다 · 길을 이끌다",
+  "cat": "단어",
+  "day": "DAY20",
+  "ex": "Let others lead the way.",
+  "exko": "다른 사람들이 앞장서게 두라."
+ },
+ {
+  "en": "stay stuck",
+  "ko": "제자리에 갇혀 있다 · 정체되다",
+  "cat": "단어",
+  "day": "DAY20",
+  "ex": "Fear keeps you stuck.",
+  "exko": "두려움이 당신을 제자리에 묶어 둔다."
+ },
+ {
+  "en": "fixed in stone",
+  "ko": "돌에 새긴 듯 고정된 · 확정된",
+  "cat": "단어",
+  "day": "DAY20",
+  "ex": "Nothing here is fixed in stone.",
+  "exko": "여기 정해진 건 아무것도 없어."
+ },
+ {
+  "en": "to your advantage",
+  "ko": "~에게 유리하게",
+  "cat": "단어",
+  "day": "DAY20",
+  "ex": "Use comparison to your advantage.",
+  "exko": "비교를 당신에게 유리하게 써라."
+ },
+ {
+  "en": "get serious about",
+  "ko": "~에 진지하게 임하다",
+  "cat": "단어",
+  "day": "DAY20",
+  "ex": "It's time to get serious about saving.",
+  "exko": "이제 저축에 진지해질 때야."
+ },
+ {
+  "en": "on purpose",
+  "ko": "일부러 · 의도적으로",
+  "cat": "단어",
+  "day": "DAY20",
+  "ex": "I wrote it long on purpose.",
+  "exko": "나는 일부러 길게 썼다."
+ },
+ {
+  "en": "something is off",
+  "ko": "뭔가 이상하다 · 어딘가 어긋나다",
+  "cat": "단어",
+  "day": "DAY20",
+  "ex": "I could tell something was off.",
+  "exko": "뭔가 이상하다는 걸 알 수 있었어."
+ },
+ {
+  "en": "rub someone the wrong way",
+  "ko": "~의 신경을 거스르다 · 비위를 건드리다",
+  "cat": "단어",
+  "day": "DAY21",
+  "ex": "His tone rubbed me the wrong way.",
+  "exko": "그의 말투가 내 신경을 거슬렀어."
+ },
+ {
+  "en": "get under someone's skin",
+  "ko": "~의 신경을 건드리다 · 거슬리다",
+  "cat": "단어",
+  "day": "DAY21",
+  "ex": "She really got under my skin.",
+  "exko": "그녀가 정말 내 신경을 건드렸어."
+ },
+ {
+  "en": "caught up in",
+  "ko": "~에 사로잡힌 · 정신 팔린",
+  "cat": "단어",
+  "day": "DAY21",
+  "ex": "I got caught up in the daily grind.",
+  "exko": "일상에 파묻혀 정신이 없었어."
+ },
+ {
+  "en": "blow up",
+  "ko": "(게시물이) 폭발적으로 뜨다 · 터지다",
+  "cat": "단어",
+  "day": "DAY21",
+  "ex": "Her post blew up overnight.",
+  "exko": "그녀의 게시물이 하룻밤 새 대박 났어."
+ },
+ {
+  "en": "burn someone up",
+  "ko": "~를 몹시 화나게 하다",
+  "cat": "단어",
+  "day": "DAY21",
+  "ex": "It burns me up when people are late.",
+  "exko": "사람들이 늦으면 정말 화가 나."
+ },
+ {
+  "en": "freak out",
+  "ko": "기겁하다 · 패닉하다",
+  "cat": "단어",
+  "day": "DAY21",
+  "ex": "Don't freak out — it's fine.",
+  "exko": "기겁하지 마 — 괜찮아."
+ },
+ {
+  "en": "downward spiral",
+  "ko": "하강 나선 · 악화일로",
+  "cat": "단어",
+  "day": "DAY21",
+  "ex": "He went into a downward spiral.",
+  "exko": "그는 점점 나락으로 빠졌어."
+ },
+ {
+  "en": "galvanize",
+  "ko": "자극해 행동하게 하다 · 분발시키다",
+  "cat": "단어",
+  "day": "DAY21",
+  "ex": "Anger can galvanize you into action.",
+  "exko": "분노가 너를 행동으로 이끌 수 있어."
+ },
+ {
+  "en": "put in the reps",
+  "ko": "반복 훈련을 쌓다 · 꾸준히 연습하다",
+  "cat": "단어",
+  "day": "DAY22",
+  "ex": "Success is about putting in the reps.",
+  "exko": "성공은 반복 훈련을 쌓는 것이다."
+ },
+ {
+  "en": "show up",
+  "ko": "나타나다 · (매일) 자리에 나오다",
+  "cat": "단어",
+  "day": "DAY22",
+  "ex": "You have to show up every day.",
+  "exko": "너는 매일 나와야 해."
+ },
+ {
+  "en": "chip away at",
+  "ko": "조금씩 깎아내다 · 꾸준히 해나가다",
+  "cat": "단어",
+  "day": "DAY22",
+  "ex": "She chipped away at the project daily.",
+  "exko": "그녀는 매일 그 프로젝트를 조금씩 해나갔어."
+ },
+ {
+  "en": "hold someone back",
+  "ko": "~를 가로막다 · 주춤하게 하다",
+  "cat": "단어",
+  "day": "DAY22",
+  "ex": "Fear is holding you back.",
+  "exko": "두려움이 당신을 가로막고 있다."
+ },
+ {
+  "en": "upper hand",
+  "ko": "우위 · 유리한 입장",
+  "cat": "단어",
+  "day": "DAY22",
+  "ex": "No one had the upper hand here.",
+  "exko": "여기서 유리한 입장에 있던 사람은 아무도 없었어."
+ },
+ {
+  "en": "afford to",
+  "ko": "~할 (금전적·상황적) 여유가 있다",
+  "cat": "단어",
+  "day": "DAY22",
+  "ex": "You cannot afford to waste your energy.",
+  "exko": "당신은 에너지를 낭비할 여유가 없다."
+ },
+ {
+  "en": "stir up",
+  "ko": "(감정을) 불러일으키다 · 부추기다",
+  "cat": "단어",
+  "day": "DAY22",
+  "ex": "The news stirred up a lot of anger.",
+  "exko": "그 소식은 많은 분노를 불러일으켰어."
+ },
+ {
+  "en": "comparison spiral",
+  "ko": "비교의 소용돌이 (자기비하로의 급락)",
+  "cat": "단어",
+  "day": "DAY22",
+  "ex": "I found myself going down a comparison spiral.",
+  "exko": "나는 비교의 소용돌이로 빠져드는 나를 발견했어."
+ },
+ {
+  "en": "one's jaw dropped",
+  "ko": "(놀라서) 입이 떡 벌어지다",
+  "cat": "단어",
+  "day": "DAY23",
+  "ex": "My jaw dropped when I saw it.",
+  "exko": "그걸 봤을 때 입이 떡 벌어졌어."
+ },
+ {
+  "en": "a pit in one's stomach",
+  "ko": "(속이 조이는) 불안감 · 응어리",
+  "cat": "단어",
+  "day": "DAY23",
+  "ex": "I tried to push the pit in my stomach down.",
+  "exko": "나는 속의 응어리를 눌러 내리려 했어."
+ },
+ {
+  "en": "dig deep",
+  "ko": "깊이 파고들다 · (내면을) 들여다보다",
+  "cat": "단어",
+  "day": "DAY23",
+  "ex": "It will help you dig deep.",
+  "exko": "그것은 당신이 깊이 파고들도록 도울 것이다."
+ },
+ {
+  "en": "unbothered",
+  "ko": "아랑곳하지 않는 · 태연한",
+  "cat": "단어",
+  "day": "DAY23",
+  "ex": "I acted completely unbothered.",
+  "exko": "나는 완전히 아무렇지 않은 척했어."
+ },
+ {
+  "en": "stifle",
+  "ko": "(감정을) 억누르다 · 참다",
+  "cat": "단어",
+  "day": "DAY23",
+  "ex": "I didn't have to stifle the jealousy.",
+  "exko": "나는 질투를 억누를 필요가 없었어."
+ },
+ {
+  "en": "undermine",
+  "ko": "약화시키다 · 갉아먹다",
+  "cat": "단어",
+  "day": "DAY23",
+  "ex": "It undermines your confidence.",
+  "exko": "그것은 당신의 자신감을 갉아먹는다."
+ },
+ {
+  "en": "leverage",
+  "ko": "지렛대로 활용하다 · 이용하다",
+  "cat": "단어",
+  "day": "DAY23",
+  "ex": "Leverage it to fuel your own journey.",
+  "exko": "그것을 지렛대 삼아 당신의 여정에 연료로 써라."
+ },
+ {
+  "en": "paralyze",
+  "ko": "마비시키다 · 꼼짝 못 하게 하다",
+  "cat": "단어",
+  "day": "DAY23",
+  "ex": "Don't let others' success paralyze you.",
+  "exko": "남들의 성공이 당신을 꼼짝 못 하게 두지 마라."
+ }
+]</script>
+<script id="DICTS" type="application/json">[
+ {
+  "n": 1,
+  "full": "Discipline is easier than motivation.",
+  "pre": "Discipline",
+  "post": "motivation.",
+  "ans": "is easier than",
+  "opt": [
+   "is easier than",
+   "is harder than",
+   "is better for",
+   "is different from"
+  ],
+  "ko": "규율(꾸준함)은 동기부여보다 쉽다."
+ },
+ {
+  "n": 2,
+  "full": "Most of us think that what we need to change our lives is more motivation.",
+  "pre": "",
+  "post": "think that what we need to change our lives is more motivation.",
+  "ans": "Most of us",
+  "opt": [
+   "Most of us",
+   "All of them",
+   "Many people",
+   "Some of you"
+  ],
+  "ko": "우리 대부분은 삶을 바꾸려면 더 많은 동기가 필요하다고 생각한다."
+ },
+ {
+  "n": 3,
+  "full": "The amount of people that come up to me and say, Jay, motivate me.",
+  "pre": "The amount of people that",
+  "post": "me and say, “Jay, motivate me.”",
+  "ans": "come up to",
+  "opt": [
+   "come up to",
+   "come out of",
+   "get up from",
+   "look up at"
+  ],
+  "ko": "나에게 다가와 “제이, 동기 좀 주세요” 하고 말하는 사람이 정말 많다."
+ },
+ {
+  "n": 4,
+  "full": "If I could just feel more motivated, I'd go to the gym, start the business, eat better.",
+  "pre": "If I could just feel more motivated,",
+  "post": "gym, start the business, eat better.",
+  "ans": "I'd go to the",
+  "opt": [
+   "I'd go to the",
+   "I went to a",
+   "I'll go on the",
+   "I'd get to my"
+  ],
+  "ko": "조금만 더 동기부여가 된다면, 헬스장에 가고, 사업을 시작하고, 더 잘 먹을 텐데."
+ },
+ {
+  "n": 5,
+  "full": "But here's the counterintuitive truth.",
+  "pre": "But here's the",
+  "post": "truth:",
+  "ans": "counterintuitive",
+  "opt": [
+   "counterintuitive",
+   "controversial",
+   "conventional",
+   "comfortable"
+  ],
+  "ko": "하지만 여기 직관에 어긋나는 진실이 있다."
+ },
+ {
+  "n": 6,
+  "full": "You don't need more motivation, you need more discipline.",
+  "pre": "You",
+  "post": "motivation, you need more discipline.",
+  "ans": "don't need more",
+  "opt": [
+   "don't need more",
+   "need a lot more",
+   "don't have any",
+   "never get more"
+  ],
+  "ko": "당신에게 필요한 건 더 많은 동기가 아니라, 더 많은 규율이다."
+ },
+ {
+  "n": 7,
+  "full": "And discipline doesn't mean willpower or toughness.",
+  "pre": "And discipline doesn't mean",
+  "post": "or toughness,",
+  "ans": "willpower",
+  "opt": [
+   "willpower",
+   "willingness",
+   "weakness",
+   "wellness"
+  ],
+  "ko": "그리고 규율은 의지력이나 근성을 뜻하는 게 아니다."
+ },
+ {
+  "n": 8,
+  "full": "It doesn't mean willpower or toughness, it means designing your life.",
+  "pre": "It doesn't mean willpower or",
+  "post": ", it means designing your life.",
+  "ans": "toughness",
+  "opt": [
+   "toughness",
+   "tiredness",
+   "softness",
+   "roughness"
+  ],
+  "ko": "그건 의지력이나 근성이 아니라, 삶을 설계하는 것을 뜻한다."
+ },
+ {
+  "n": 9,
+  "full": "Psychologists call this ego depletion.",
+  "pre": "Psychologists call this",
+  "post": ".",
+  "ans": "ego depletion",
+  "opt": [
+   "ego depletion",
+   "ego expansion",
+   "energy donation",
+   "echo reflection"
+  ],
+  "ko": "심리학자들은 이것을 ‘의지력 방전(ego depletion)’이라 부른다."
+ },
+ {
+  "n": 10,
+  "full": "Motivation fades with your mood.",
+  "pre": "Motivation",
+  "post": "your mood,",
+  "ans": "fades with",
+  "opt": [
+   "fades with",
+   "fights with",
+   "fills with",
+   "fades away"
+  ],
+  "ko": "동기는 기분에 따라 사그라든다."
+ },
+ {
+  "n": 11,
+  "full": "Discipline survives with your systems.",
+  "pre": "discipline",
+  "post": "your systems.",
+  "ans": "survives with",
+  "opt": [
+   "survives with",
+   "survives without",
+   "suffers with",
+   "serves with"
+  ],
+  "ko": "규율은 시스템과 함께 살아남는다."
+ },
+ {
+  "n": 12,
+  "full": "So many of us get tired of making so many small decisions all day.",
+  "pre": "So many of us",
+  "post": "making so many small decisions all day.",
+  "ans": "get tired of",
+  "opt": [
+   "get tired of",
+   "get tired to",
+   "are tiring of",
+   "get tired from"
+  ],
+  "ko": "우리 중 많은 이가 하루 종일 사소한 결정을 너무 많이 하다 지쳐 버린다."
+ },
+ {
+  "n": 13,
+  "full": "Keep your energy for the big decisions.",
+  "pre": "",
+  "post": "for the big decisions.",
+  "ans": "Keep your energy",
+  "opt": [
+   "Keep your energy",
+   "Save your money",
+   "Keep your promise",
+   "Give your energy"
+  ],
+  "ko": "큰 결정을 위해 에너지를 아껴 두라."
+ }
+]</script>
+<script id="SITUS" type="application/json">[
+ {
+  "q": "친구가 “요즘 왜 이렇게 의욕이 안 생기지?” 하고 물어요. 이번 주 배운 걸로 답한다면?",
+  "ans": "Motivation fades with your mood — build a system instead.",
+  "opt": [
+   "Motivation fades with your mood — build a system instead.",
+   "Motivation grows with your mood, so just wait.",
+   "Your mood fades with motivation, so sleep more.",
+   "Motivation is easier than discipline, so relax."
+  ],
+  "ko": "동기는 기분 따라 사그라들어 — 대신 시스템을 만들어."
+ },
+ {
+  "q": "저녁만 되면 아무것도 결정하기 싫어져요. 이 현상을 뭐라고 부르죠?",
+  "ans": "That's ego depletion — your willpower runs out.",
+  "opt": [
+   "That's ego depletion — your willpower runs out.",
+   "That's a comparison spiral — you compare too much.",
+   "That's a downward spiral — you're getting worse.",
+   "That's stage fright — you're just nervous."
+  ],
+  "ko": "그건 의지력 방전이야 — 의지력 배터리가 닳은 거지."
+ },
+ {
+  "q": "중요한 회의가 오후에 있어요. 오전엔 어떻게 하라고 조언할까요?",
+  "ans": "Keep your energy for the big decisions.",
+  "opt": [
+   "Keep your energy for the big decisions.",
+   "Get tired of the small decisions first.",
+   "Come up to the big decisions early.",
+   "Fade with the small decisions today."
+  ],
+  "ko": "큰 결정을 위해 에너지를 아껴 둬."
+ },
+ {
+  "q": "공연이 끝나고 팬 한 명이 가수에게 다가와 말을 걸었어요. 영어로는?",
+  "ans": "A fan came up to her after the show.",
+  "opt": [
+   "A fan came up to her after the show.",
+   "A fan came out of her after the show.",
+   "A fan got up to her after the show.",
+   "A fan looked up her after the show."
+  ],
+  "ko": "공연 후 한 팬이 그녀에게 다가왔어."
+ },
+ {
+  "q": "동료가 내가 하려던 프로젝트를 먼저 해버렸어요. 뭐라고 말할까요? (DAY20)",
+  "ans": "I wanted to do that, but she beat me to it.",
+  "opt": [
+   "I wanted to do that, but she beat me to it.",
+   "I wanted to do that, but she beat me up.",
+   "I wanted to do that, but she led the way.",
+   "I wanted to do that, but she chipped away."
+  ],
+  "ko": "나도 그거 하고 싶었는데, 그녀가 먼저 해버렸어."
+ },
+ {
+  "q": "SNS에서 누군가의 성공을 보고 속이 부글부글 끓을 때, 이 책이 권하는 태도는? (DAY20)",
+  "ans": "Let Them — their success gives you the formula.",
+  "opt": [
+   "Let Them — their success gives you the formula.",
+   "Let Them — their win is your loss.",
+   "Stop them before they beat you to it.",
+   "Argue against what you want."
+  ],
+  "ko": "그냥 냅둬 — 그들의 성공이 너에게 공식을 알려주니까."
+ },
+ {
+  "q": "어떤 사람의 말투가 계속 신경에 거슬려요. 영어로 자연스럽게? (DAY21)",
+  "ans": "His tone really rubbed me the wrong way.",
+  "opt": [
+   "His tone really rubbed me the wrong way.",
+   "His tone really rubbed me on the wrong side.",
+   "His tone really burned me down.",
+   "His tone really blew me up."
+  ],
+  "ko": "그의 말투가 정말 내 신경을 거슬렀어."
+ },
+ {
+  "q": "“근육을 키우려면 매일 나와야 해” — 성공도 마찬가지라는 걸 한 표현으로? (DAY22)",
+  "ans": "You just have to put in the reps.",
+  "opt": [
+   "You just have to put in the reps.",
+   "You just have to put up the reps.",
+   "You just have to show off every day.",
+   "You just have to stir up the reps."
+  ],
+  "ko": "그냥 반복 훈련을 꾸준히 쌓아야 해."
+ },
+ {
+  "q": "친구 집에 갔는데 너무 멋져서 입이 떡 벌어졌어요. 영어로? (DAY23)",
+  "ans": "My jaw dropped when I walked in.",
+  "opt": [
+   "My jaw dropped when I walked in.",
+   "My jaw fell off when I walked in.",
+   "My mouth blew up when I walked in.",
+   "My jaw stifled when I walked in."
+  ],
+  "ko": "들어서는 순간 입이 떡 벌어졌어."
+ },
+ {
+  "q": "질투가 났지만 아무렇지 않은 척했어요. 영어로? (DAY23)",
+  "ans": "I acted completely unbothered.",
+  "opt": [
+   "I acted completely unbothered.",
+   "I acted completely unbelievable.",
+   "I acted completely paralyzed.",
+   "I acted completely undermined."
+  ],
+  "ko": "나는 완전히 아무렇지 않은 척했어."
+ },
+ {
+  "q": "“남의 성공에 자꾸 발목 잡혀요” — 이번 주 표현으로 조언한다면? (DAY23)",
+  "ans": "Leverage it to fuel your own journey.",
+  "opt": [
+   "Leverage it to fuel your own journey.",
+   "Let it paralyze your own journey.",
+   "Let it undermine your own journey.",
+   "Stifle it and stay stuck."
+  ],
+  "ko": "그걸 지렛대 삼아 네 여정의 연료로 써."
+ },
+ {
+  "q": "“나는 왜 저 사람처럼 못하지” 대신 어떻게 생각을 바꾸라고 하나요? (DAY20 패턴)",
+  "ans": "Flip comparison into your greatest teacher.",
+  "opt": [
+   "Flip comparison into your greatest teacher.",
+   "Flip your teacher into a comparison.",
+   "See your wins as their losses.",
+   "Make yourself feel defeated first."
+  ],
+  "ko": "비교를 당신의 가장 위대한 스승으로 뒤집어라."
+ }
+]</script>
+<script>
+/* ============ DATA & helpers ============ */
+const ITEMS = JSON.parse(document.getElementById('ITEMS').textContent);
+const DICTS = JSON.parse(document.getElementById('DICTS').textContent);
+const SITUS = JSON.parse(document.getElementById('SITUS').textContent);
+/* ★ 타임어택 랭킹: 아래 따옴표 안에 구글 Apps Script 웹앱 URL을 붙여넣으면 랭킹이 켜집니다 (비우면 랭킹 숨김) */
+/* ★ 주차 설정 — 새 주차 만들 때 이 숫자만 바꾸면 랭킹·코인·오답노트가 모두 그 주차 전용으로 분리됩니다 */
+const WEEK = 5;
+const MODE_TIME  = 'time_w'+WEEK;      // 주차별 타임어택 랭킹 (닉네임별 최고점 유지)
+const MODE_COINS = 'coins_w'+WEEK;     // 주차별 코인 랭킹 (누적 코인)
+const K_COINS = 'lt_coins_w'+WEEK;     // 주차별 코인 저장 키
+const K_WRONG = 'lt_wrong_w'+WEEK;     // 주차별 오답노트 키
+const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbya5Vr05XxKs0VEkkhfvqUcALKT9bQW35eqYcYnajCDGLJ-Xkt_VyDpjkUCdpN8NY5v/exec";
+const $=id=>document.getElementById(id);
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function norm(s){return (s||'').toLowerCase().replace(/[.,!?"“”'’]/g,'').replace(/\s+/g,' ').trim();}
+function stopSpeak(){ try{ if(window.speechSynthesis)speechSynthesis.cancel(); }catch(e){} document.querySelectorAll('.playline.playing,.listenbtn.playing').forEach(el=>el.classList.remove('playing')); }
+function show(id){stopSpeak();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');window.scrollTo(0,0);}
+
+/* ============ Sophie ============ */
+function sophieSVG(){return `<svg viewBox="0 0 96 112" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+ <ellipse cx="48" cy="106" rx="30" ry="5" fill="rgba(0,0,0,.12)"/>
+ <rect x="41" y="56" width="14" height="24" rx="6" fill="#ffe1c4" stroke="#0d3d28" stroke-width="3"/>
+ <path d="M22 108 Q22 70 48 70 Q74 70 74 108 Z" fill="#2fd06a" stroke="#0d3d28" stroke-width="3"/>
+ <path d="M40 71 Q48 80 56 71" fill="none" stroke="#fff" stroke-width="3" opacity=".9"/>
+ <g class="hand l"><circle cx="20" cy="86" r="9" fill="#ffd9b8" stroke="#0d3d28" stroke-width="3"/></g>
+ <g class="hand r"><circle cx="76" cy="86" r="9" fill="#ffd9b8" stroke="#0d3d28" stroke-width="3"/></g>
+ <path d="M22 44 Q22 12 48 12 Q74 12 74 44 L74 60 Q74 66 68 66 L28 66 Q22 66 22 60 Z" fill="#7a4a22" stroke="#0d3d28" stroke-width="3"/>
+ <circle cx="48" cy="44" r="22" fill="#ffe1c4" stroke="#0d3d28" stroke-width="3"/>
+ <path d="M27 40 Q28 20 48 20 Q68 20 69 40 Q58 30 48 30 Q38 30 27 40 Z" fill="#7a4a22" stroke="#0d3d28" stroke-width="2.5"/>
+ <circle cx="40" cy="45" r="7.5" fill="#fff" opacity=".55" stroke="#0d3d28" stroke-width="2.6"/>
+ <circle cx="57" cy="45" r="7.5" fill="#fff" opacity=".55" stroke="#0d3d28" stroke-width="2.6"/>
+ <line x1="47.5" y1="45" x2="49.5" y2="45" stroke="#0d3d28" stroke-width="2.6"/>
+ <circle cx="40" cy="45" r="2.4" fill="#2b1a0e"/><circle cx="57" cy="45" r="2.4" fill="#2b1a0e"/>
+ <circle cx="32" cy="52" r="3.5" fill="#ffb0a0" opacity=".7"/><circle cx="64" cy="52" r="3.5" fill="#ffb0a0" opacity=".7"/>
+ <path d="M42 55 Q48 61 54 55" fill="none" stroke="#0d3d28" stroke-width="2.6" stroke-linecap="round"/></svg>`;}
+document.querySelectorAll('.sophie').forEach(s=>s.innerHTML=sophieSVG());
+function setSophie(el,mode){ el.className='sophie'+(el.dataset.sz||''); if(mode==='clap'){el.classList.add('clap','bounce');sfx.clap();sparkleBurst(el);setTimeout(()=>el.classList.remove('clap'),1300);} else if(mode==='sad'){el.classList.add('sad');} }
+function sparkleBurst(el){ const r=el.getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height*0.42; const em=['⭐','✨','🌟','💫','⭐','✨'];
+  for(let i=0;i<9;i++){ const s=document.createElement('div'); s.className='sparkle'; s.textContent=em[i%em.length];
+    const ang=(i/9)*Math.PI*2+Math.random()*0.5, dist=34+Math.random()*46;
+    s.style.left=(cx+Math.cos(ang)*dist)+'px'; s.style.top=(cy+Math.sin(ang)*dist*0.85)+'px';
+    s.style.fontSize=(15+Math.random()*15)+'px'; s.style.animationDelay=(Math.random()*0.18)+'s';
+    document.body.appendChild(s); setTimeout(()=>s.remove(),1050);
+  } }
+[['mSophie'],['tSophie']].forEach(([id])=>{$(id).dataset.sz='';});
+
+/* ============ Sound ============ */
+let AC=null, muted=false;
+function ac(){ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function beep(f,s,d,t='square',v=.12){const c=ac();if(!c||muted)return;const o=c.createOscillator(),g=c.createGain();o.type=t;o.frequency.value=f;o.connect(g);g.connect(c.destination);const tt=c.currentTime+s;g.gain.setValueAtTime(0,tt);g.gain.linearRampToValueAtTime(v,tt+.01);g.gain.exponentialRampToValueAtTime(.0001,tt+d);o.start(tt);o.stop(tt+d+.02);}
+const sfx={
+  coin(){beep(988,0,.07,'square',.14);beep(1319,.06,.14,'square',.14);},
+  correct(){[523,659,784,1047].forEach((f,i)=>beep(f,i*.07,.16,'square',.13));},
+  wrong(){beep(300,0,.16,'sawtooth',.10);beep(200,.12,.22,'sawtooth',.10);},
+  combo(){[784,988,1319,1568].forEach((f,i)=>beep(f,i*.05,.14,'square',.12));},
+  clap(){for(let i=0;i<3;i++)beep(1200+Math.random()*400,i*.06,.05,'triangle',.08);},
+  flip(){beep(660,0,.05,'square',.08);},
+  win(){[523,659,784,1047,1319,1047,1319,1568].forEach((f,i)=>beep(f,i*.11,.22,'square',.13));},
+  tick(urg){beep(urg?1950:1550,0,.035,'square',urg?.10:.06);},
+  tock(urg){beep(urg?1400:1040,0,.05,'square',urg?.10:.06);}
+};
+function speak(text){ try{ if(muted||!window.speechSynthesis)return;
+  text=(text||'').replace(/[^\x00-\x7F]/g,' ').replace(/\s+/g,' ').trim(); if(!text)return; // Latin only (한글·기호 제거)
+  const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=.92; u.pitch=1;
+  const vs=speechSynthesis.getVoices();
+  const pref=vs.find(v=>/en[-_]US/i.test(v.lang)&&/natural|samantha|google|aria|jenny|zira|siri/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang));
+  if(pref)u.voice=pref;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);}catch(e){} }
+if(window.speechSynthesis){ speechSynthesis.onvoiceschanged=()=>{}; }
+
+/* ============ Wallet & coin FX ============ */
+function loadCoins(){ try{return parseInt(localStorage.getItem(K_COINS)||'0',10)||0;}catch(e){return 0;} }
+function saveCoins(){ try{localStorage.setItem(K_COINS,String(coins));}catch(e){} }
+let coins=loadCoins();   // 지갑 코인 = 기기에 저장(새로고침해도 유지)
+function updateWallet(){ ['walletTop','qlWallet','mWallet','tWallet','rWallet','sWallet','tsWallet','swWallet','rmWallet','rpWallet'].forEach(id=>{const e=$(id);if(e)e.textContent=coins;}); }
+function addCoins(n,fromEl,coinElId){
+  const target=$(coinElId||'qlCoin')||$('walletTop');
+  const tr=target.getBoundingClientRect();
+  const start=fromEl?fromEl.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0};
+  const N=Math.min(8,Math.max(3,Math.round(n/6)));
+  const per=Math.floor(n/N), shares=Array.from({length:N},(_,k)=>per+(k<(n-per*N)?1:0));
+  for(let i=0;i<N;i++){const c=document.createElement('div');c.className='flycoin';
+    const sx=start.left+(start.width/2||0)+(Math.random()*30-15),sy=start.top+(Math.random()*10);
+    c.style.left=sx+'px';c.style.top=sy+'px';document.body.appendChild(c);
+    const dx=tr.left-sx,dy=tr.top-sy,delay=i*40,add=shares[i];
+    requestAnimationFrame(()=>{c.style.transition='transform .5s cubic-bezier(.4,0,.6,1),opacity .5s';c.style.transitionDelay=delay+'ms';c.style.transform=`translate(${dx}px,${dy}px) scale(.6)`;c.style.opacity='.4';});
+    setTimeout(()=>{coins+=add;saveCoins();updateWallet();bump(target);c.remove();},500+delay);
+  }
+  const f=document.createElement('div');f.className='float';f.textContent='+'+n;
+  f.style.left=(start.left+(start.width/2||0))+'px';f.style.top=(start.top-6)+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1000);
+}
+function bump(el){el.style.transition='transform .15s';el.style.transform='scale(1.35)';setTimeout(()=>el.style.transform='',150);}
+function popCombo(n){const c=document.createElement('div');c.className='combo';c.textContent=n+' COMBO!';document.body.appendChild(c);requestAnimationFrame(()=>c.classList.add('go'));setTimeout(()=>c.remove(),1000);}
+function sayBubble(el,txt,emph){el.classList.remove('show');el.innerHTML=emph?`<b>${txt}</b>`:txt;requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));}
+const LINES={
+  ask:['자, 이건 뭘까? 🤔','천천히 골라봐~ 🧐','이거 알 것 같은데? 💡','집중! Focus! 🎯','What do you think? 🤓','골라볼까? ✏️','You can do it! 💪'],
+  good:['좋았어! 👏','정확해! 💯',"That's it! 🎯",'바로 그거야! 🙌','Perfect! ✨','You got it! ⭐','굿굿! 😊','훌륭해! 👍','Nailed it! 🔥','완벽해! 🌟','Excellent! 🎉','최고야! 😎'],
+  combo:['On fire! 🔥','콤보 대박! 👏👏','Unstoppable! ⚡','미쳤다 진짜! 🤩','Amazing streak! 🌟','천재인데?! 🎉','Keep going! 🚀','연속 정답 폭발! 💥','So good! 😎','멈출 수가 없다! 🏆','Incredible! ✨','불타오른다! 🔥🔥'],
+  miss:['괜찮아, 다시! 💪','No worries! 🙂','이제 알았지? 📌',"Almost! 다음엔 맞자 ✨","You'll get it! 🔥",'한 번 더 기억하자! 🧠',"It's okay! 🌈",'다음 문제 가보자! 👊','Nice try! 😉'],
+  listen:['잘 들어봐 👂','Listen carefully! 🎧','귀 쫑긋! 👂','One more time? 🔁','집중해서 들어봐 🎵']
+};
+function line(k){const a=LINES[k];return a[Math.floor(Math.random()*a.length)];}
+
+/* ============ Composition (shared bonus) ============ */
+let compo=null, compoLocked=false, onCompoEnd=null;
+function startComposition(it,cb){
+  const target=(it.ex||'').replace(/[.,!?"“”]/g,'').split(/\s+/).filter(Boolean);
+  if(target.length<2||target.length>11){ cb('nocompo'); return; }
+  compo={it,target,ans:[],bank:shuffle(target.map((w,i)=>({w,i})))}; compoLocked=false; onCompoEnd=cb;
+  $('qlReveal').style.display='none'; $('qlPrev').style.display='none'; $('qlNext').style.display='none';
+  $('compoMsg').textContent=''; $('compoKo').textContent='“'+it.exko+'”'; $('compo').classList.remove('done'); $('compo').style.display='block'; renderCompo();
+}
+function renderCompo(){
+  const bank=$('compoBank'),ans=$('compoAnswer');bank.innerHTML='';ans.innerHTML='';
+  compo.ans.forEach(tk=>{const c=chip(tk.w,'ans');attachChip(c,tk,'ans');ans.appendChild(c);});
+  if(!compo.ans.length){const ph=document.createElement('span');ph.className='compo-ph';ph.textContent='단어를 탭하거나 드래그해서 배치! 👇';ans.appendChild(ph);}
+  compo.bank.forEach(tk=>{const c=chip(tk.w,'bank');attachChip(c,tk,'bank');bank.appendChild(c);});
+}
+function chip(w,kind){const b=document.createElement('span');b.className='chip '+kind;b.textContent=w;return b;}
+/* --- tap + drag (insert anywhere) --- */
+let drag=null, insBar=null;
+function rect(id){return $(id).getBoundingClientRect();}
+function inRect(e,r){return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;}
+function attachChip(el,tk,source){
+  el.addEventListener('pointerdown',e=>{ if(compoLocked)return; e.preventDefault();
+    drag={tk,source,el,sx:e.clientX,sy:e.clientY,moved:false,clone:null};
+    window.addEventListener('pointermove',onDragMove);
+    window.addEventListener('pointerup',onDragUp,{once:true});
+  });
+}
+function onDragMove(e){ if(!drag)return;
+  if(!drag.moved && Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>7) beginDrag();
+  if(drag.moved){ e.preventDefault(); positionClone(e); updateInsBar(e); } }
+function onDragUp(e){ window.removeEventListener('pointermove',onDragMove); if(!drag)return;
+  if(!drag.moved){ tapChip(drag.tk,drag.source); } else { dropChip(e); } endDrag(); }
+function tapChip(tk,source){
+  if(source==='bank'){ const i=compo.bank.indexOf(tk); if(i>=0){compo.bank.splice(i,1);compo.ans.push(tk);} }
+  else { const i=compo.ans.indexOf(tk); if(i>=0){compo.ans.splice(i,1);compo.bank.push(tk);} }
+  renderCompo();
+}
+function beginDrag(){ drag.moved=true;
+  const arr=drag.source==='bank'?compo.bank:compo.ans; const i=arr.indexOf(drag.tk); if(i>=0)arr.splice(i,1);
+  renderCompo();
+  const c=document.createElement('div');c.className='dragclone';c.textContent=drag.tk.w;document.body.appendChild(c);drag.clone=c;
+  insBar=document.createElement('div');insBar.className='insbar';document.body.appendChild(insBar);
+  $('compoAnswer').classList.add('dropzone');
+}
+function positionClone(e){ if(drag.clone){drag.clone.style.left=e.clientX+'px';drag.clone.style.top=e.clientY+'px';} }
+function computeInsert(x,y){ const els=[...$('compoAnswer').querySelectorAll('.chip')];
+  for(let i=0;i<els.length;i++){ const r=els[i].getBoundingClientRect(); if(y<r.bottom && x<r.left+r.width/2) return {idx:i,r,at:'before'}; }
+  const last=els[els.length-1]; return {idx:els.length,r:last?last.getBoundingClientRect():null,at:'end'}; }
+function updateInsBar(e){ if(!insBar)return; const overAns=inRect(e,rect('compoAnswer'));
+  if(!overAns){ insBar.style.display='none'; return; } insBar.style.display='block';
+  const {r,at}=computeInsert(e.clientX,e.clientY); const box=rect('compoAnswer');
+  if(!r){ insBar.style.left=(box.left+10)+'px'; insBar.style.top=(box.top+9)+'px'; insBar.style.height='26px'; return; }
+  insBar.style.top=r.top+'px'; insBar.style.height=r.height+'px'; insBar.style.left=(at==='before'?r.left-4:r.right+2)+'px';
+}
+function dropChip(e){ if(inRect(e,rect('compoAnswer'))){ const {idx}=computeInsert(e.clientX,e.clientY); compo.ans.splice(idx,0,drag.tk); }
+  else { compo.bank.push(drag.tk); } renderCompo(); }
+function endDrag(){ if(drag&&drag.clone)drag.clone.remove(); if(insBar){insBar.remove();insBar=null;} const a=$('compoAnswer'); if(a)a.classList.remove('dropzone'); drag=null; }
+function resetCompo(){ if(compoLocked||!compo)return; compo.bank=shuffle(compo.target.map((w,i)=>({w,i}))); compo.ans=[]; $('compoMsg').textContent=''; renderCompo(); }
+function checkCompo(){
+  if(!compo||compoLocked)return;
+  if(compo.ans.length<compo.target.length){shakeCompo('아직 단어가 남았어! ✍️');return;}
+  const built=compo.ans.map(t=>t.w).join(' ');
+  if(norm(built)===norm(compo.it.ex)){
+    compoLocked=true;$('compo').classList.add('done');
+    addCoins(qlLastGain,$('compoAnswer'),'qlCoin');sfx.correct();setTimeout(()=>sfx.combo(),120);setSophie($('qlSophie'),'clap');
+    sayBubble($('qlBubble'),'영작까지 완벽! 코인 2배! 🎉',true);
+    setTimeout(()=>{const cb=onCompoEnd;compo=null;onCompoEnd=null;$('compo').style.display='none';cb&&cb('success');},750);
+  }else{shakeCompo('순서를 다시 확인해봐! 🔁');sfx.wrong();}
+}
+function shakeCompo(msg){const el=$('compo');el.classList.remove('shk');void el.offsetWidth;el.classList.add('shk');$('compoMsg').textContent=msg;}
+function skipCompo(){ if(compoLocked||!compo)return; stopSpeak(); const cb=onCompoEnd;compo=null;onCompoEnd=null;$('compo').style.display='none';cb&&cb('skip'); }
+
+/* ============ QUEST / LISTEN engine ============ */
+let ql=null, qlLastGain=0;
+function startQL(mode){
+  ac();
+  if(mode==='dict'||mode==='situ'){
+    const src = mode==='dict'?DICTS:SITUS;
+    const pool = shuffle(src).slice(0,8);
+    ql={mode, total:pool.length, qi:0, frontier:0, combo:0, maxCombo:0, correct:0, coin0:coins,
+      deck:pool.map(it=>({it, opts:shuffle(it.opt.map((t,i)=>({t, ok:i===0})))})),
+      answers:[]};
+    updateWallet(); updateQLCombo(); show('ql'); renderQL(); return;
+  }
+  const pool=shuffle(ITEMS).slice(0,8);
+  ql={mode, total:pool.length, qi:0, frontier:0, combo:0, maxCombo:0, correct:0, coin0:coins,
+    deck:pool.map(it=>{
+      if(mode==='listen'){ const wrongs=shuffle(ITEMS.filter(x=>x.exko!==it.exko)).slice(0,3).map(x=>x.exko);
+        return {it,opts:shuffle([{t:it.exko,ok:true},...wrongs.map(w=>({t:w,ok:false}))])}; }
+      const wrongs=shuffle(ITEMS.filter(x=>x.en!==it.en)).slice(0,3).map(x=>x.en);
+      return {it,opts:shuffle([{t:it.en,ok:true},...wrongs.map(w=>({t:w,ok:false}))])};
+    }),
+    answers:[] };
+  updateWallet(); updateQLCombo(); show('ql'); renderQL();
+}
+function tagOf(it){
+  if(it.cat==='패턴') return {label:(it.day?it.day+' · ':'')+'필수패턴', cls:'pat'};
+  if(it.cat==='단어') return {label:(it.day?it.day+' · ':'')+'핵심단어', cls:'sup'};
+  return {label:'5주차 교재', cls:'sup'};
+}
+function renderQL(){
+  const q=ql.deck[ql.qi], reviewed=ql.qi<ql.frontier;
+  $('qlProg').style.width=(ql.frontier/ql.total*100)+'%';
+  $('qlStage').textContent=`STAGE ${ql.qi+1} / ${ql.total}`+(reviewed?' · 복습':'');
+  const tag=$('qlTag');
+  if(ql.mode==='listen'){tag.className='qtag listen';tag.textContent='LISTENING';}
+  else if(ql.mode==='dict'){tag.className='qtag dict';tag.textContent='DICTATION';}
+  else if(ql.mode==='situ'){tag.className='qtag situ';tag.textContent='SITUATION';}
+  else{const tg=tagOf(q.it);tag.className='qtag '+tg.cls;tag.textContent=tg.label;}
+  // listen button
+  const lb=$('qlListen');
+  if(ql.mode==='dict'){
+    lb.style.display='flex';
+    lb.onclick=()=>{lb.classList.add('playing');speak(q.it.full);setTimeout(()=>lb.classList.remove('playing'),1800);};
+    const st=$('qlShowText'); st.style.display='none';
+  }
+  else if(ql.mode==='situ'){ lb.style.display='none'; $('qlShowText').style.display='none'; }
+  else if(ql.mode==='listen'){ lb.style.display='flex'; lb.onclick=()=>{lb.classList.add('playing');speak(q.it.ex);setTimeout(()=>lb.classList.remove('playing'),1400);};
+    const st=$('qlShowText'); st.style.display=reviewed?'none':'block'; st.textContent='🔇 소리가 안 들리면 · 영어 문장 보기'; st.onclick=()=>{ $('qlMain').innerHTML=`<span class="hl" style="font-size:19px">${esc(q.it.ex)}</span>`; st.textContent='👀 '+q.it.ex; }; }
+  else { lb.style.display='none'; $('qlShowText').style.display='none'; }
+  // prompt & main
+  if(ql.mode==='dict'){
+    $('qlPrompt').textContent='잘 듣고 빈칸에 들어갈 표현을 골라봐! ✍️';
+    $('qlMain').innerHTML=`<div class="dictsent">${esc(q.it.pre)} <span class="blankslot"></span> ${esc(q.it.post)}</div>`;
+  }
+  else if(ql.mode==='situ'){
+    $('qlPrompt').textContent='이럴 땐 영어로 뭐라고 할까? 💬';
+    $('qlMain').innerHTML=`<div class="situq">${esc(q.it.q)}</div>`;
+  }
+  else if(ql.mode==='listen'){ $('qlPrompt').textContent='잘 듣고 문장의 뜻을 골라봐! 👂'; $('qlMain').innerHTML=''; }
+  else { $('qlPrompt').textContent=q.it.cat==='패턴'?'이 뜻의 영어 패턴은?':(q.it.cat==='단어'?'이 뜻의 영어 단어·표현은?':'이 뜻의 영어 표현은?'); $('qlMain').innerHTML=`<span class="hl">${esc(q.it.ko)}</span>`; }
+  // options
+  const box=$('qlOpts');box.innerHTML='';const KEYS=['A','B','C','D'];
+  q.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<span class="k">${KEYS[i]}</span>${esc(o.t)}`;
+    if(reviewed){ b.disabled=true; if(o.ok)b.classList.add('correct'); else if(ql.answers[ql.qi]&&ql.answers[ql.qi].chosen===o.t&&!o.ok)b.classList.add('wrong'); else b.classList.add('dim'); }
+    else b.onclick=()=>pickQL(b,o,q);
+    box.appendChild(b);});
+  // answer bar
+  $('compo').style.display='none';
+  if(reviewed){ showQLReveal(q); $('qlAnswer').classList.add('show'); $('qlReveal').style.display=''; $('qlPrev').style.display=''; $('qlNext').style.display='';
+    $('qlPrev').disabled=ql.qi===0; $('qlNext').textContent='현재 문제로'; setSophie($('qlSophie'),'idle'); sayBubble($('qlBubble'),'복습 중이야 📖',false); }
+  else { $('qlAnswer').classList.remove('show'); setSophie($('qlSophie'),'idle'); sayBubble($('qlBubble'),(ql.mode==='listen'||ql.mode==='dict')?line('listen'):line('ask'),false);
+    if(ql.mode==='listen') setTimeout(()=>{lb.classList.add('playing');speak(q.it.ex);setTimeout(()=>lb.classList.remove('playing'),1400);},350);
+    if(ql.mode==='dict') setTimeout(()=>{lb.classList.add('playing');speak(q.it.full);setTimeout(()=>lb.classList.remove('playing'),1800);},350); }
+}
+function pickQL(btn,o,q){
+  const btns=[...$('qlOpts').querySelectorAll('.opt')];btns.forEach(b=>b.disabled=true);
+  const ct=q.opts.find(x=>x.ok).t;
+  if(o.ok){
+    btn.classList.add('correct');btns.forEach(b=>{if(b!==btn)b.classList.add('dim');});
+    ql.correct++;ql.combo++;ql.maxCombo=Math.max(ql.maxCombo,ql.combo);
+    qlLastGain=10+(ql.combo>=2?(ql.combo-1)*5:0);
+    addCoins(qlLastGain,btn,'qlCoin');sfx.correct();setTimeout(()=>sfx.coin(),120);setSophie($('qlSophie'),'clap');
+    updateQLCombo();
+    if(ql.combo>=2){popCombo(ql.combo);sfx.combo();sayBubble($('qlBubble'),line('combo'),true);} else sayBubble($('qlBubble'),line('good'),true);
+    ql.answers[ql.qi]={chosen:o.t,correct:true};
+    $('qlAnswer').classList.add('show');
+    if(ql.mode==='dict'||ql.mode==='situ'){ speak(ql.mode==='dict'?q.it.full:q.it.ans); finalizeQL(q); }
+    else startComposition(q.it,(res)=>{ if(res==='skip'){ qlNext(); } else { speak(q.it.ex); finalizeQL(q); } });
+  }else{
+    btn.classList.add('wrong');btns.forEach(b=>{if(b.textContent.includes(ct))b.classList.add('correct');else if(b!==btn)b.classList.add('dim');});
+    ql.combo=0;updateQLCombo();sfx.wrong();setSophie($('qlSophie'),'sad');sayBubble($('qlBubble'),line('miss'),true);
+    markWrong(q.it); ql.answers[ql.qi]={chosen:o.t,correct:false};
+    $('qlAnswer').classList.add('show'); finalizeQL(q);
+  }
+}
+function finalizeQL(q){ showQLReveal(q); $('qlReveal').style.display=''; $('qlPrev').style.display=''; $('qlNext').style.display='';
+  $('qlPrev').disabled=ql.qi===0; $('qlNext').textContent=(ql.frontier+1>=ql.total)?'결과 보기 🏁':'다음 ▶'; }
+function showQLReveal(q){const it=q.it;
+  if(ql.mode==='dict'){
+    $('qlReveal').innerHTML=`<span class="en">${esc(it.ans)}</span><br><span class="exko">📝 <button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.full)}<br>${esc(it.ko)}</span>`;
+    const pb0=$('qlPlay'); if(pb0) pb0.onclick=()=>{pb0.classList.add('playing');speak(it.full);setTimeout(()=>pb0.classList.remove('playing'),1800);};
+    return;
+  }
+  if(ql.mode==='situ'){
+    $('qlReveal').innerHTML=`<span class="en">${esc(it.ans)}</span><br><span class="exko">📝 <button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.ko)}</span>`;
+    const pb1=$('qlPlay'); if(pb1) pb1.onclick=()=>{pb1.classList.add('playing');speak(it.ans);setTimeout(()=>pb1.classList.remove('playing'),1800);};
+    return;
+  }
+  $('qlReveal').innerHTML=`<span class="en">${esc(it.en)}</span> — ${esc(it.ko)}<br><span class="exko">📝 <button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.ex)}<br>${esc(it.exko)}</span>`;
+  const pb=$('qlPlay'); if(pb) pb.onclick=()=>{pb.classList.add('playing');speak(it.ex);setTimeout(()=>pb.classList.remove('playing'),1400);};
+}
+function updateQLCombo(){$('qlCombo').textContent='COMBO '+ql.combo;$('qlCombo').style.background=ql.combo>=3?'var(--orange)':(ql.combo>=2?'var(--green2)':'var(--green)');}
+function qlNext(){ stopSpeak(); if(ql.qi<ql.frontier){ ql.qi=ql.frontier; renderQL(); return; } // return from review
+  ql.frontier++; if(ql.frontier>=ql.total){ finishQL(); return; } ql.qi=ql.frontier; renderQL(); }
+function qlPrev(){ stopSpeak(); if(ql.qi>0){ ql.qi--; renderQL(); } }
+function finishQL(){
+  const acc=Math.round(ql.correct/ql.total*100), earned=coins-ql.coin0;
+  const TT={listen:'LISTENING CLEAR',dict:'DICTATION CLEAR',situ:'SITUATION CLEAR'};
+  resultScreen({title:TT[ql.mode]||'QUEST CLEAR', earned, s1:acc+'%',l1:'정답률', s2:ql.maxCombo,l2:'최고 콤보', acc,
+    again:()=>startQL(ql.mode)});
+}
+
+/* ============ 📚 나의 서재 ============ */
+const K_ROOM='lt_room_w'+WEEK, RM_N=10;
+const ROOM_ITEMS=[
+  {id:'desk',n:'책상',e:'🪵'},{id:'chair',n:'의자',e:'🪑'},{id:'bed',n:'침대',e:'🛏️'},
+  {id:'curtain',n:'커튼',e:'🪟'},{id:'rug',n:'러그',e:'🟠'},{id:'lamp',n:'스탠드',e:'💡'},
+  {id:'plant',n:'화분',e:'🪴'},{id:'frame',n:'액자',e:'🖼️'},{id:'clock',n:'벽시계',e:'🕐'},
+  {id:'clothes',n:'옷걸이',e:'👗'},{id:'console',n:'게임기',e:'🎮'},{id:'cat',n:'고양이',e:'🐱'},
+  {id:'computer',n:'컴퓨터',e:'💻',need:'desk'},{id:'pencil',n:'연필꽂이',e:'✏️',need:'desk'}
+];
+const CHARS=[
+  {id:'g1',nm:'미나', sex:'f',hair:'#4a3228',shirt:'#f4a6c8',bottom:'#e07aa8',skirt:true, style:'long'},
+  {id:'g2',nm:'하늘', sex:'f',hair:'#7a4a2a',shirt:'#8fc9ff',bottom:'#5a97e0',skirt:true, style:'bob'},
+  {id:'g3',nm:'루아', sex:'f',hair:'#c9773f',shirt:'#8fe0b4',bottom:'#4fb98a',skirt:true, style:'twin'},
+  {id:'b1',nm:'준',   sex:'m',hair:'#2f2a26',shirt:'#8fc9ff',bottom:'#41506b',skirt:false,style:'short'},
+  {id:'b2',nm:'하람', sex:'m',hair:'#6b4526',shirt:'#ffd76a',bottom:'#41506b',skirt:false,style:'curly'},
+  {id:'b3',nm:'도윤', sex:'m',hair:'#3a2a1e',shirt:'#8fe0b4',bottom:'#41506b',skirt:false,style:'cap',cap:'#e8604f'}
+];
+function hairBack(c){
+  if(c.style==='long') return `<ellipse cx="19" cy="18" rx="17" ry="16.5" fill="${c.hair}"/>`;
+  if(c.style==='bob')  return `<ellipse cx="19" cy="16.5" rx="15.5" ry="15" fill="${c.hair}"/>`;
+  if(c.style==='twin') return `<ellipse cx="19" cy="16" rx="15" ry="14.5" fill="${c.hair}"/>`;
+  return '';
+}
+function hairFront(c){
+  const H=c.hair;
+  switch(c.style){
+    case 'long': return `<path d="M5.2,16 a13.8,13.8 0 0 1 27.6,0 q-5,-8 -13.8,-8 q-8.8,0 -13.8,8 z" fill="${H}"/>
+      <rect x="2.4" y="13" width="7" height="27" rx="3.5" fill="${H}"/><rect x="28.6" y="13" width="7" height="27" rx="3.5" fill="${H}"/>`;
+    case 'bob':  return `<path d="M5.2,16 a13.8,13.8 0 0 1 27.6,0 q-6,-9 -13.8,-6 q-7.8,-3 -13.8,6 z" fill="${H}"/>
+      <rect x="3.6" y="13" width="6.4" height="16" rx="3.2" fill="${H}"/><rect x="28" y="13" width="6.4" height="16" rx="3.2" fill="${H}"/>`;
+    case 'twin': return `<path d="M5.2,16 a13.8,13.8 0 0 1 27.6,0 q-5,-8 -13.8,-8 q-8.8,0 -13.8,8 z" fill="${H}"/>
+      <circle cx="2.8" cy="20" r="6" fill="${H}" stroke="#3a3a38" stroke-width="1.8"/>
+      <circle cx="35.2" cy="20" r="6" fill="${H}" stroke="#3a3a38" stroke-width="1.8"/>`;
+    case 'short':return `<path d="M5.6,15.5 a13.6,13.6 0 0 1 27.2,0 q-6.5,-8.5 -13.6,-4.5 q-7.1,-4 -13.6,4.5 z" fill="${H}"/>`;
+    case 'curly':return `<path d="M5.6,15.5 a13.6,13.6 0 0 1 27.2,0 q-6.5,-7.5 -13.6,-4 q-7.1,-3.5 -13.6,4 z" fill="${H}"/>
+      <circle cx="7.5" cy="10" r="4.4" fill="${H}"/><circle cx="13.5" cy="5.2" r="4.8" fill="${H}"/><circle cx="24.5" cy="5.2" r="4.8" fill="${H}"/><circle cx="30.5" cy="10" r="4.4" fill="${H}"/><circle cx="19" cy="3.4" r="4.4" fill="${H}"/>`;
+    case 'cap':  return `<path d="M5.6,15 a13.6,13.6 0 0 1 27.2,0 q-6.5,-7 -13.6,-4 q-7.1,-3 -13.6,4 z" fill="${H}"/>
+      <path d="M5.4,11 a13.6,13.6 0 0 1 27.2,0 z" fill="${c.cap}" stroke="#3a3a38" stroke-width="2"/>
+      <rect x="1.6" y="9.6" width="34.8" height="4.6" rx="2.3" fill="${c.cap}" stroke="#3a3a38" stroke-width="2"/>
+      <circle cx="19" cy="1.8" r="2.2" fill="${c.cap}" stroke="#3a3a38" stroke-width="1.6"/>`;
+  }
+  return '';
+}
+function charSVG(c){ return `
+  <ellipse cx="19" cy="59.5" rx="14" ry="3.2" fill="#000" opacity=".12"/>
+  <rect x="11.2" y="43" width="7.6" height="13" rx="3.8" fill="${c.bottom}"/>
+  <rect x="19.2" y="43" width="7.6" height="13" rx="3.8" fill="${c.bottom}"/>
+  <ellipse cx="15" cy="56.8" rx="5.2" ry="3.4" fill="#4a4a46" stroke="#3a3a38" stroke-width="1.6"/>
+  <ellipse cx="23" cy="56.8" rx="5.2" ry="3.4" fill="#4a4a46" stroke="#3a3a38" stroke-width="1.6"/>
+  ${c.skirt?`<path d="M8.6,39 L29.4,39 L33.4,50.5 L4.6,50.5 Z" fill="${c.bottom}" stroke="#3a3a38" stroke-width="2.2" stroke-linejoin="round"/>`:''}
+  <rect x="7" y="27.5" width="24" height="19" rx="9.5" fill="${c.shirt}" stroke="#3a3a38" stroke-width="2.2"/>
+  <rect x="1.4" y="29.5" width="7" height="14.5" rx="3.5" fill="${c.shirt}" stroke="#3a3a38" stroke-width="2"/>
+  <rect x="29.6" y="29.5" width="7" height="14.5" rx="3.5" fill="${c.shirt}" stroke="#3a3a38" stroke-width="2"/>
+  <circle cx="4.9" cy="44.6" r="3.6" fill="#ffe3c8" stroke="#3a3a38" stroke-width="1.8"/>
+  <circle cx="33.1" cy="44.6" r="3.6" fill="#ffe3c8" stroke="#3a3a38" stroke-width="1.8"/>
+  ${hairBack(c)}
+  <circle cx="19" cy="15.5" r="13.6" fill="#ffe3c8" stroke="#3a3a38" stroke-width="2.4"/>
+  ${hairFront(c)}
+  <ellipse cx="13.6" cy="17.6" rx="2.5" ry="3" fill="#3a3a38"/>
+  <ellipse cx="24.4" cy="17.6" rx="2.5" ry="3" fill="#3a3a38"/>
+  <circle cx="14.6" cy="16.3" r="1" fill="#fff"/><circle cx="25.4" cy="16.3" r="1" fill="#fff"/>
+  <ellipse cx="8.8" cy="21.2" rx="2.7" ry="1.9" fill="#ffb0b0" opacity=".9"/>
+  <ellipse cx="29.2" cy="21.2" rx="2.7" ry="1.9" fill="#ffb0b0" opacity=".9"/>
+  <path d="M16.4,22.6 q2.6,2.6 5.2,0" stroke="#3a3a38" stroke-width="1.7" fill="none" stroke-linecap="round"/>`; }
+function loadRoom(){ try{const r=JSON.parse(localStorage.getItem(K_ROOM)||'null');
+    if(r&&Array.isArray(r.owned)) return {char:r.char||'', owned:r.owned, books:r.books||0}; }catch(e){}
+  return {char:'', owned:[], books:0}; }
+function saveRoom(){ try{localStorage.setItem(K_ROOM,JSON.stringify(room));}catch(e){} }
+let room=loadRoom();
+const BOOK_BOT=[72,106,147], BOOK_COL=['#e05a5a','#f0a63c','#3fb56d','#4a8ff0','#a06bd8','#f07ab0','#3fc0c0','#f7c948'];
+function paintRoom(popLast){
+  ROOM_ITEMS.forEach(it=>{const g=$('ri-'+it.id); if(g) g.style.display = room.owned.includes(it.id)?'':'none';});
+  const bg=$('bookG'); if(bg){ bg.innerHTML='';
+    const n=Math.min(room.books,12);
+    for(let i=0;i<n;i++){ const sh=Math.floor(i/4), idx=i%4;
+      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+      r.setAttribute('x',216+idx*22); r.setAttribute('y',BOOK_BOT[sh]-25);
+      r.setAttribute('width',18); r.setAttribute('height',25); r.setAttribute('rx',2);
+      r.setAttribute('fill',BOOK_COL[i%BOOK_COL.length]); r.setAttribute('stroke','#3a3a38'); r.setAttribute('stroke-width','2');
+      if(popLast && i===n-1) r.setAttribute('class','bookpop');
+      bg.appendChild(r); } }
+  const cg=$('charG'); if(cg) cg.innerHTML=charSVG(CHARS.find(c=>c.id===room.char)||CHARS[0]);
+  const bp=$('rmBooks'); if(bp) bp.textContent='📚 '+room.books;
+}
+/* --- 캐릭터 선택 --- */
+let pickChar='';
+function enterRoom(){ if(room.char) startRoom(); else openCharPick(); }
+let pickSex='f';
+function renderCharGrid(){
+  const g=$('rpGrid'); g.innerHTML='';
+  const list=CHARS.filter(c=>c.sex===pickSex);
+  if(!list.some(c=>c.id===pickChar)) pickChar=list[0].id;
+  list.forEach(c=>{ const d=document.createElement('div'); d.className='rp-card'+(c.id===pickChar?' on':'');
+    d.dataset.id=c.id;
+    d.innerHTML=`<svg viewBox="-1.5 -2.5 41 65">${charSVG(c)}</svg><div class="chk">✓ 선택</div>`;
+    d.onclick=()=>{ pickChar=c.id; [...g.children].forEach(x=>x.classList.toggle('on',x.dataset.id===pickChar)); ac(); sfx.coin(); };
+    g.appendChild(d); });
+  $('rpTabF').classList.toggle('on',pickSex==='f');
+  $('rpTabM').classList.toggle('on',pickSex==='m');
+}
+function openCharPick(){
+  updateWallet(); pickChar=room.char||CHARS[0].id;
+  const me=CHARS.find(c=>c.id===pickChar); pickSex = me?me.sex:'f';
+  const nk=getNick(); $('rpHi').innerHTML = nk?('<b>'+esc(nk)+'</b> 님과 함께 공부할 캐릭터를 골라주세요!'):'함께 공부할 캐릭터를 골라주세요!';
+  renderCharGrid(); show('roomPick');
+}
+/* --- 퀴즈 --- */
+let rm=null;
+function roomQ(it){
+  const kind=['ko2en','en2ko','listen'][Math.floor(Math.random()*3)], tg=tagOf(it);
+  if(kind==='listen'){ const w=shuffle(ITEMS.filter(x=>x.exko!==it.exko)).slice(0,3).map(x=>x.exko);
+    return {it,kind,tag:['LISTENING','listen'],prompt:'잘 듣고 문장의 뜻을 골라봐! 👂',main:'',listen:it.ex,
+      opts:shuffle([{t:it.exko,ok:true},...w.map(t=>({t,ok:false}))])}; }
+  if(kind==='en2ko'){ const w=shuffle(ITEMS.filter(x=>x.ko!==it.ko)).slice(0,3).map(x=>x.ko);
+    return {it,kind,tag:[tg.label,tg.cls],prompt:'이 표현의 뜻은?',main:`<span class="hl">${esc(it.en)}</span>`,listen:null,
+      opts:shuffle([{t:it.ko,ok:true},...w.map(t=>({t,ok:false}))])}; }
+  const w=shuffle(ITEMS.filter(x=>x.en!==it.en)).slice(0,3).map(x=>x.en);
+  return {it,kind,tag:[tg.label,tg.cls],prompt:'이 뜻의 영어 표현은?',main:`<span class="hl">${esc(it.ko)}</span>`,listen:null,
+    opts:shuffle([{t:it.en,ok:true},...w.map(t=>({t,ok:false}))])};
+}
+function startRoom(){
+  ac(); if(!room.char){ room.char=pickChar||CHARS[0].id; saveRoom(); }
+  rm={deck:shuffle(ITEMS).slice(0,RM_N).map(roomQ), i:0, correct:0, coin0:coins, lock:false};
+  $('rmQuizCard').style.display=''; $('rmDoneCard').style.display='none';
+  updateWallet(); paintRoom(); show('room'); renderRM();
+}
+function renderRM(){
+  const q=rm.deck[rm.i]; rm.lock=false;
+  const nk=getNick(); $('rmTitle').textContent=(nk?nk+'의 방':'내 방')+' · '+(rm.i+1)+' / '+RM_N;
+  $('rmProg').style.width=(rm.i/RM_N*100)+'%';
+  $('rmInfo').innerHTML=`📚 책 <b>${room.books}권</b> · 🎁 아이템 <b>${room.owned.length}/${ROOM_ITEMS.length}개</b> &nbsp;—&nbsp; 맞히면 책이 쌓여요!`;
+  const tag=$('rmTag'); tag.className='qtag '+q.tag[1]; tag.textContent=q.tag[0];
+  $('rmPrompt').textContent=q.prompt; $('rmMain').innerHTML=q.main;
+  const lb=$('rmListen');
+  if(q.listen){ lb.style.display='flex';
+    lb.onclick=()=>{lb.classList.add('playing');speak(q.listen);setTimeout(()=>lb.classList.remove('playing'),1500);};
+    setTimeout(()=>{lb.classList.add('playing');speak(q.listen);setTimeout(()=>lb.classList.remove('playing'),1500);},320); }
+  else lb.style.display='none';
+  const box=$('rmOpts'); box.innerHTML=''; const K=['A','B','C','D'];
+  q.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='opt';
+    b.innerHTML=`<span class="k">${K[i]}</span>${esc(o.t)}`; b.onclick=()=>pickRM(b,o,q); box.appendChild(b); });
+  $('rmPick').style.display='none'; $('rmAnswer').classList.remove('show');
+}
+function pickRM(btn,o,q){
+  if(rm.lock)return; rm.lock=true;
+  const btns=[...$('rmOpts').querySelectorAll('.opt')]; btns.forEach(b=>b.disabled=true);
+  const ct=q.opts.find(x=>x.ok).t;
+  $('rmReveal').innerHTML=`<span class="en">${esc(q.it.en)}</span> — ${esc(q.it.ko)}<br><span class="exko">📝 ${esc(q.it.ex)}<br>${esc(q.it.exko)}</span>`;
+  if(o.ok){
+    btn.classList.add('correct'); btns.forEach(b=>{if(b!==btn)b.classList.add('dim');});
+    rm.correct++; room.books++; saveRoom(); paintRoom(true);
+    addCoins(10,btn,'rmCoin'); sfx.correct(); setTimeout(()=>sfx.coin(),110); speak(q.it.ex);
+    $('rmInfo').innerHTML=`📖 책 한 권이 짜잔! <b>책 ${room.books}권</b>이 됐어요 ✨`;
+    $('rmAnswer').classList.add('show'); offerItems();
+  } else {
+    btn.classList.add('wrong'); btns.forEach(b=>{ if(b.textContent.slice(1).trim()===ct.trim())b.classList.add('correct'); else if(b!==btn)b.classList.add('dim'); });
+    sfx.wrong(); markWrong(q.it);
+    $('rmInfo').innerHTML='아쉬워요! 이번엔 책이 안 쌓였어요 😢 다음 문제로!';
+    $('rmAnswer').classList.add('show'); $('rmNext').style.display='';
+  }
+  $('rmNext').textContent=(rm.i+1>=RM_N)?'서재 완성 보기 🏁':'다음 ▶';
+}
+function offerItems(){
+  const avail=ROOM_ITEMS.filter(x=>!room.owned.includes(x.id) && (!x.need||room.owned.includes(x.need)));
+  if(!avail.length){ $('rmPick').style.display='none'; $('rmNext').style.display=''; return; }
+  const two=shuffle(avail).slice(0,2);
+  const box=$('rmPickBtns'); box.innerHTML='';
+  two.forEach(x=>{ const b=document.createElement('button'); b.className='rm-item';
+    b.innerHTML=`<span class="e">${x.e}</span><span class="n">${x.n}</span>`;
+    b.onclick=()=>chooseItem(x,b); box.appendChild(b); });
+  $('rmPick').style.display='block'; $('rmNext').style.display='none';
+}
+function chooseItem(x,btn){
+  room.owned.push(x.id); saveRoom(); paintRoom();
+  const g=$('ri-'+x.id); if(g){ g.classList.remove('pop'); void g.getBoundingClientRect(); g.classList.add('pop'); }
+  addCoins(5,btn,'rmCoin'); sfx.coin();
+  $('rmPick').style.display='none'; $('rmNext').style.display='';
+  $('rmInfo').innerHTML=`<b>${x.e} ${x.n}</b> 을(를) 방에 놓았어요! 🎉 &nbsp;아이템 <b>${room.owned.length}/${ROOM_ITEMS.length}</b>`;
+  $('roomSvg').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function rmNextClick(){ stopSpeak(); rm.i++; if(rm.i>=RM_N) finishRM(); else renderRM(); }
+function finishRM(){
+  const nk=getNick(); $('rmProg').style.width='100%'; $('rmTitle').textContent=(nk?nk+'의 방':'내 방')+' · 완성!';
+  $('rmQuizCard').style.display='none'; $('rmDoneCard').style.display='';
+  const full=room.owned.length>=ROOM_ITEMS.length;
+  $('rmDoneTitle').textContent = full?((nk?nk+'의 ':'')+'방 완성! 🎉'):((nk?nk+'의 ':'오늘의 ')+'서재 완성! 📚');
+  $('rmDoneBody').innerHTML=`이번 판 <b>${rm.correct} / ${RM_N}</b> 정답<br>
+    📚 책 <b>${room.books}권</b> · 🎁 아이템 <b>${room.owned.length}/${ROOM_ITEMS.length}개</b><br>
+    <span style="font-size:13px;color:#7a7a76">방은 저장돼요 — 또 하면 계속 채워집니다!</span>`;
+  $('rmInfo').innerHTML=`📚 책 <b>${room.books}권</b> · 🎁 아이템 <b>${room.owned.length}/${ROOM_ITEMS.length}개</b>`;
+  updateWallet(); sfx.win(); confetti();
+}
+/* ============ ⚡ 맞아? 틀려? (SPEED MATCH) ============ */
+const SW_N=15;
+let sw=null;
+function startSwipe(){
+  ac();
+  const pool=shuffle(ITEMS).slice(0,SW_N);
+  sw={ deck: pool.map(it=>{
+        const fake = Math.random()<0.5;
+        const other = fake ? shuffle(ITEMS.filter(x=>x.ko!==it.ko))[0] : null;
+        return {it, ko: fake?other.ko:it.ko, real:!fake};
+      }),
+      i:0, combo:0, maxCombo:0, correct:0, coin0:coins, lock:false };
+  updateWallet(); show('swipe'); renderSW();
+}
+function paintStreak(){
+  const box=$('swStreak'); box.innerHTML='';
+  for(let k=0;k<5;k++){ const d=document.createElement('div'); d.className='sw-dot'+(k<(sw.combo%5||(sw.combo&&5))?' on':''); box.appendChild(d); }
+}
+function renderSW(){
+  const c=sw.deck[sw.i]; sw.lock=false;
+  $('swProg').style.width=(sw.i/SW_N*100)+'%';
+  $('swLeft').textContent=(sw.i+1)+' / '+SW_N;
+  $('swCombo').textContent='COMBO '+sw.combo;
+  $('swCombo').style.background=sw.combo>=3?'var(--orange)':(sw.combo>=2?'var(--green2)':'var(--green)');
+  paintStreak();
+  const card=$('swCard'); card.className='sw-card pop';
+  $('swEn').textContent=c.it.en; $('swKo').textContent=c.ko;
+  $('swMsg').innerHTML='이 짝이 맞을까? 🤔';
+  $('swYes').disabled=false; $('swNo').disabled=false;
+  setSophie($('swSophie'),'idle'); sayBubble($('swBubble'),line('ask'),false);
+}
+function pickSW(sayYes){
+  if(sw.lock) return; sw.lock=true;
+  const c=sw.deck[sw.i], ok=(sayYes===c.real);
+  $('swYes').disabled=true; $('swNo').disabled=true;
+  const card=$('swCard');
+  if(ok){
+    sw.correct++; sw.combo++; sw.maxCombo=Math.max(sw.maxCombo,sw.combo);
+    let gain=10+(sw.combo>=2?(sw.combo-1)*5:0);
+    let bonus = (sw.combo%5===0) ? 25 : 0;
+    addCoins(gain+bonus,card,'swCoin'); sfx.correct(); setTimeout(()=>sfx.coin(),110);
+    setSophie($('swSophie'),'clap');
+    $('swMsg').innerHTML = c.real
+      ? '⭕ 맞아요! <span class="fix">'+esc(c.it.en)+'</span> = '+esc(c.it.ko)
+      : '❌ 맞아요! 진짜 뜻은 <span class="fix">'+esc(c.it.ko)+'</span>';
+    if(bonus){ popCombo(sw.combo); sfx.combo(); sayBubble($('swBubble'),'5연속! 보너스 +25 🎁',true); }
+    else if(sw.combo>=2){ popCombo(sw.combo); sfx.combo(); sayBubble($('swBubble'),line('combo'),true); }
+    else sayBubble($('swBubble'),line('good'),true);
+    card.classList.add(sayYes?'go-right':'go-left');
+  } else {
+    sw.combo=0; sfx.wrong(); setSophie($('swSophie'),'sad'); markWrong(c.it);
+    $('swMsg').innerHTML = c.real
+      ? '아쉬워요! 이 짝이 <span class="fix">맞았어요</span> — '+esc(c.it.en)+' = '+esc(c.it.ko)
+      : '아쉬워요! <span class="fix">'+esc(c.it.en)+'</span> 의 진짜 뜻은 <span class="fix">'+esc(c.it.ko)+'</span>';
+    sayBubble($('swBubble'),line('miss'),true);
+    card.classList.add('shake');
+  }
+  paintStreak(); $('swCombo').textContent='COMBO '+sw.combo;
+  setTimeout(()=>{ sw.i++; if(sw.i>=SW_N) finishSW(); else renderSW(); }, ok?820:1500);
+}
+function finishSW(){
+  $('swProg').style.width='100%';
+  const acc=Math.round(sw.correct/SW_N*100), earned=coins-sw.coin0;
+  resultScreen({title:'SPEED MATCH CLEAR', earned, s1:sw.correct+' / '+SW_N, l1:'맞힌 개수',
+    s2:sw.maxCombo, l2:'최고 콤보', acc, again:startSwipe});
+}
+
+/* ============ MATCH ============ */
+let mm=null;
+function startMatch(){
+  ac(); const pool=ITEMS.filter(x=>x.en.length<=24 && x.ko.length<=24); const picks=shuffle(pool.length>=6?pool:ITEMS).slice(0,6);
+  const cards=[]; picks.forEach((it,i)=>{cards.push({pair:i,txt:it.en,en:true});cards.push({pair:i,txt:it.ko,en:false});});
+  mm={cards:shuffle(cards),open:[],matched:0,moves:0,lock:false,t0:Date.now(),coin0:coins,timer:null};
+  const g=$('mGrid');g.innerHTML='';
+  mm.cards.forEach((c,idx)=>{const d=document.createElement('div');d.className='mcard';d.dataset.i=idx;
+    d.innerHTML=`<div class="inner"><div class="mface back">?</div><div class="mface front${c.en?' en':''}">${esc(c.txt)}</div></div>`;
+    d.onclick=()=>flip(idx,d);g.appendChild(d);});
+  updateWallet(); sayBubble($('mBubble'),'같은 짝을 찾아 뒤집어봐! 🃏',false); setSophie($('mSophie'),'idle');
+  clearInterval(mm.timer); mm.timer=setInterval(()=>{$('mInfo').textContent='⏱️ '+Math.floor((Date.now()-mm.t0)/1000)+'s';},250);
+  show('match');
+}
+function flip(idx,el){
+  if(mm.lock||el.classList.contains('flip')||el.classList.contains('matched'))return;
+  el.classList.add('flip');sfx.flip();mm.open.push({idx,el,c:mm.cards[idx]});
+  if(mm.open.length===2){
+    mm.lock=true;mm.moves++;
+    const [a,b]=mm.open;
+    if(a.c.pair===b.c.pair){
+      setTimeout(()=>{a.el.classList.add('matched');b.el.classList.add('matched');mm.matched++;mm.open=[];mm.lock=false;
+        addCoins(15,b.el,'mWallet');sfx.coin();setSophie($('mSophie'),'clap');sayBubble($('mBubble'),'짝 맞췄다! 👏',true);
+        if(mm.matched===6)setTimeout(finishMatch,600);},420);
+    }else{
+      setTimeout(()=>{a.el.classList.remove('flip');b.el.classList.remove('flip');mm.open=[];mm.lock=false;sfx.wrong();},760);
+    }
+  }
+}
+function finishMatch(){
+  clearInterval(mm.timer);
+  const secs=Math.round((Date.now()-mm.t0)/1000);
+  const speedBonus=Math.max(0,60-secs)*2; if(speedBonus)addCoins(speedBonus,$('mGrid'),'mWallet');
+  setTimeout(()=>{const earned=coins-mm.coin0;
+    resultScreen({title:'MATCH CLEAR!',earned,s1:secs+'s',l1:'클리어 시간',s2:'+'+speedBonus,l2:'스피드 보너스',acc:100,again:startMatch});},700);
+}
+
+/* ============ TIME ATTACK ============ */
+let ta=null;
+function startTime(){
+  ac(); ta={left:30.0,combo:0,maxCombo:0,correct:0,answered:0,coin0:coins,timer:null,cur:null,tk:0};
+  $('tProg').style.width='100%';updateWallet();updateTCombo();show('time');nextTA();
+  ta.timer=setInterval(()=>{
+    ta.left-=0.1; if(ta.left<0)ta.left=0;
+    $('tProg').style.width=(ta.left/30*100)+'%'; $('tTimeLbl').textContent='⏱️ '+ta.left.toFixed(1)+'s';
+    // 째깍째깍 시계 BGM (평소 0.5s, 남은 5초부터 0.2s로 급하게)
+    ta.tk++; const urg=ta.left<=5.0; const period=urg?2:5;
+    if(ta.left>0 && ta.tk%period===0){ (Math.floor(ta.tk/period)%2) ? sfx.tick(urg) : sfx.tock(urg); }
+    if(ta.left<=0){ endTA(); }
+  },100);
+}
+function nextTA(){
+  let it; do{ it=shuffle(ITEMS)[0]; }while(ITEMS.length>1 && it===ta.last); ta.last=it;
+  const types=['ko2en','en2ko','apply','sent']; const type=types[Math.floor(Math.random()*types.length)];
+  let prompt,main,correct,pool,tag;
+  if(type==='ko2en'){ prompt='이 뜻의 영어 표현은? (빠르게!)'; tag='표현'; main=`<span class="hl">${esc(it.ko)}</span>`; correct=it.en; pool=ITEMS.filter(x=>x.en!==it.en).map(x=>x.en); }
+  else if(type==='en2ko'){ prompt='이 표현의 뜻은?'; tag='뜻'; main=`<span class="hl">${esc(it.en)}</span>`; correct=it.ko; pool=ITEMS.filter(x=>x.ko!==it.ko).map(x=>x.ko); }
+  else if(type==='apply'){ prompt='이 뜻의 영어 문장은?'; tag='문장'; main=`<span class="hl">${esc(it.exko)}</span>`; correct=it.ex; pool=ITEMS.filter(x=>x.ex!==it.ex).map(x=>x.ex); }
+  else { prompt='이 영어 문장의 뜻은?'; tag='문장'; main=`<span class="hl" style="font-size:18px">${esc(it.ex)}</span>`; correct=it.exko; pool=ITEMS.filter(x=>x.exko!==it.exko).map(x=>x.exko); }
+  const opts=shuffle([{t:correct,ok:true},...shuffle(pool).slice(0,3).map(w=>({t:w,ok:false}))]);
+  ta.cur={it,opts}; $('tPrompt').textContent=prompt; $('tTag').textContent=tag; $('tMain').innerHTML=main;
+  const box=$('tOpts');box.innerHTML='';const KEYS=['A','B','C','D'];
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<span class="k">${KEYS[i]}</span>${esc(o.t)}`;b.onclick=()=>pickTA(b,o);box.appendChild(b);});
+}
+function pickTA(btn,o){
+  if(ta.left<=0)return; ta.answered++;
+  if(o.ok){ ta.correct++;ta.combo++;ta.maxCombo=Math.max(ta.maxCombo,ta.combo);
+    const gain=8+(ta.combo>=2?(ta.combo-1)*4:0);
+    btn.classList.add('correct');addCoins(gain,btn,'tCoin');sfx.correct();setSophie($('tSophie'),'clap');updateTCombo();
+    if(ta.combo>=3){popCombo(ta.combo);} ta.left=Math.min(30,ta.left+0.6);
+    sayBubble($('tBubble'),ta.combo>=3?line('combo'):line('good'),true);
+    setTimeout(nextTA,150);
+  }else{ markWrong(ta.cur.it); ta.combo=0;updateTCombo();btn.classList.add('wrong');sfx.wrong();ta.left=Math.max(0,ta.left-2);setSophie($('tSophie'),'sad');
+    sayBubble($('tBubble'),['앗! -2초 ⏱️','Oops! -2초 😵','아이쿠! -2초 💨'][Math.floor(Math.random()*3)],true); btn.disabled=true; }
+}
+function updateTCombo(){$('tCombo').textContent='COMBO '+ta.combo;$('tCombo').style.background=ta.combo>=3?'var(--orange)':(ta.combo>=2?'var(--green2)':'var(--green)');}
+function endTA(){ clearInterval(ta.timer); $('tProg').style.width='0%'; document.querySelectorAll('#tOpts .opt').forEach(b=>b.disabled=true);
+  const earned=coins-ta.coin0;
+  setTimeout(()=>resultScreen({title:'TIME UP!',earned,s1:ta.correct,l1:'맞힌 개수',s2:ta.maxCombo,l2:'최고 콤보',acc:ta.correct>=12?100:ta.correct>=7?70:40,again:startTime,mode:'time',score:earned}),500);
+}
+
+/* ============ Leaderboard (구글시트, JSONP) ============ */
+function getNick(){ try{return localStorage.getItem('lt_nick')||'';}catch(e){return '';} }
+function setNick(n){ try{localStorage.setItem('lt_nick',n);}catch(e){} }
+function jsonp(params){ return new Promise(resolve=>{
+  if(!LEADERBOARD_URL){resolve(null);return;}
+  const name='__lb'+Date.now()+Math.floor(Math.random()*1e4); let done=false;
+  const s=document.createElement('script');
+  window[name]=data=>{done=true;try{delete window[name];}catch(_){}s.remove();resolve(data);};
+  const q=Object.entries(params).map(([k,v])=>encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&');
+  s.src=LEADERBOARD_URL+(LEADERBOARD_URL.includes('?')?'&':'?')+q+'&callback='+name;
+  s.onerror=()=>{if(!done){try{delete window[name];}catch(_){}s.remove();resolve(null);}};
+  document.body.appendChild(s);
+  setTimeout(()=>{if(!done){try{delete window[name];}catch(_){}s.remove();resolve(null);}},12000);
+});}
+let rankMode=MODE_TIME;
+async function submitScore(score,md){
+  const nick=(($('nickInput').value||'').trim()||getNick()).slice(0,12);
+  if(!nick){ $('rankStatus').textContent='닉네임을 입력해줘! ✏️'; return; }
+  setNick(nick); $('submitScore').disabled=true; $('rankStatus').textContent='등록 중... ⏳';
+  const res=await jsonp({action:'submit',nick,score,mode:md||rankMode});
+  $('rankStatus').textContent = (res&&res.ok)?'등록 완료! 🎉':'등록 실패 😢 (인터넷/URL 확인)';
+  $('submitScore').disabled=false; fetchTop();
+}
+async function fetchTop(){
+  if(!$('rankStatus').textContent) $('rankStatus').textContent='랭킹 불러오는 중... ⏳';
+  const list=await jsonp({action:'top',mode:rankMode,n:10});
+  if(!list||!Array.isArray(list)){ if(!$('rankList').children.length)$('rankStatus').textContent='랭킹을 불러올 수 없어요 😢'; return; }
+  renderRank(list);
+}
+function renderRank(list){
+  const me=getNick(); const ol=$('rankList'); ol.innerHTML='';
+  if(!list.length){ $('rankStatus').textContent='아직 기록이 없어요. 1등을 노려봐! 🥇'; return; }
+  $('rankStatus').textContent='';
+  list.forEach((r,i)=>{ const li=document.createElement('li'); li.className=(i<3?'r'+(i+1):'')+(r.nick===me?' me':'');
+    const rk=i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);
+    li.innerHTML=`<span class="rk">${rk}</span><span class="nm">${esc(r.nick)}</span><span class="sc">${r.score}</span>`;
+    ol.appendChild(li); });
+}
+
+/* ============ Time Attack 시작(닉네임) & 랭킹 보기 ============ */
+function openTimeStart(){ updateWallet(); const n=getNick(); $('tsWho').innerHTML=n?('🙋 <b>'+esc(n)+'</b> 님으로 기록돼요'):''; show('timeStart'); }
+function showRankingOnly(){
+  show('result');
+  $('rMedal').textContent='🏆'; $('rTitle').textContent='랭킹'; $('rStars').textContent=''; $('rBubble').innerHTML='현재 랭킹이야! 🏆'; $('rSophie').className='sophie';
+  const big=document.querySelector('#result .big'), sg=document.querySelector('#result .statgrid'), rf=document.querySelector('#rankBox .rankform');
+  if(big)big.style.display='none'; if(sg)sg.style.display='none'; if(rf)rf.style.display='none';
+  $('rankBox').style.display='block'; $('rankList').innerHTML=''; $('rankStatus').textContent='';
+  $('deleteMyRank').style.display=getNick()?'inline-block':'none';
+  $('rAgain').onclick=()=>openTimeStart(); fetchTop();
+}
+
+/* ============ RESULT ============ */
+function resultScreen(o){
+  updateWallet(); submitCoins();
+  const rb=$('rankBox'), big=document.querySelector('#result .big'), sg=document.querySelector('#result .statgrid'), rf=document.querySelector('#rankBox .rankform');
+  if(big)big.style.display=''; if(sg)sg.style.display=''; if(rf)rf.style.display='';
+  if(o.mode==='time' && LEADERBOARD_URL){ rankMode = MODE_TIME;
+    rb.style.display='block'; $('nickInput').value=getNick(); $('rankStatus').textContent=''; $('rankList').innerHTML='';
+    $('submitScore').disabled=false; $('submitScore').onclick=()=>submitScore(o.score||0);
+    if(getNick()){ if(rf)rf.style.display='none'; submitScore(o.score||0); }   // 닉네임은 첫 진입 때 받았으므로 항상 자동 등록
+    else { if(rf)rf.style.display=''; fetchTop(); }
+    $('deleteMyRank').style.display=getNick()?'inline-block':'none'; }
+  else if(rb){ rb.style.display='none'; }
+  let stars=o.acc>=90?3:o.acc>=60?2:1;
+  const pick=a=>a[Math.floor(Math.random()*a.length)];
+  let medal,title,bub;
+  if(o.acc>=90){medal='🏆';title='PERFECT!';bub=pick(['완벽해!! 최고야 👏👏👏','Perfect! You are amazing! 🌟','대박! 거의 다 맞혔어! 🎉','Flawless! 완벽 그 자체 💯']);}
+  else if(o.acc>=60){medal='🥇';title='GREAT!';bub=pick(['정말 잘했어! 👏','Great job! 🙌','훌륭해! 조금만 더! ✨','You did great! 😊']);}
+  else{medal='🥈';title='GOOD JOB';bub=pick(['좋아! 조금만 더 💪','Nice try! 다시 도전! 🔥','괜찮아, 하면 할수록 늘어! 🌈','Keep practicing! 👊']);}
+  $('rMedal').textContent=medal;$('rTitle').textContent=o.title||title;$('rStars').style.display='none';
+  $('rBubble').innerHTML=bub;$('rSophie').className='sophie clap bounce';
+  $('rCoins').textContent='0';countTo($('rCoins'),o.earned,900);
+  $('rS1').textContent=o.s1;$('rL1').textContent=o.l1;$('rS2').textContent=o.s2;$('rL2').textContent=o.l2;
+  $('rAgain').onclick=o.again;
+  show('result');sfx.win();confetti();
+}
+function countTo(el,to,ms){const t0=performance.now();(function s(t){const p=Math.min(1,(t-t0)/ms);el.textContent=Math.round(to*p);if(p<1)requestAnimationFrame(s);})(t0);}
+
+/* ============ Confetti ============ */
+function confetti(){const cv=$('confetti'),ctx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#ffd23a','#2fd06a','#3fa0ff','#ff5a52','#f0951e','#9b6cff','#fff'];let ps=[];
+  for(let i=0;i<140;i++)ps.push({x:Math.random()*cv.width,y:-20-Math.random()*cv.height,r:5+Math.random()*7,c:cols[i%cols.length],vy:2+Math.random()*4,vx:-2+Math.random()*4,rot:Math.random()*6,vr:-.2+Math.random()*.4});
+  let fr=0;(function anim(){fr++;ctx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);ctx.restore();});ps=ps.filter(p=>p.y<cv.height+20);if(ps.length&&fr<260)requestAnimationFrame(anim);else ctx.clearRect(0,0,cv.width,cv.height);})();}
+
+/* ============ 복습 노트 (Study) + 틀린 것 추적 ============ */
+let wrong=loadWrong(), studyTab='all';
+function loadWrong(){ try{return new Set(JSON.parse(localStorage.getItem(K_WRONG)||'[]'));}catch(e){return new Set();} }
+function saveWrong(){ try{localStorage.setItem(K_WRONG,JSON.stringify([...wrong]));}catch(e){} }
+function markWrong(it){ if(!it||it.en===undefined)return; const i=ITEMS.indexOf(it); if(i>=0){wrong.add(i);saveWrong();} }
+function openStudy(tab){ studyTab=tab||'all'; stopSpeak(); updateWallet(); show('study'); renderStudy(); }
+function renderStudy(){
+  $('tabAll').classList.toggle('on',studyTab==='all'); $('tabWrong').classList.toggle('on',studyTab==='wrong');
+  $('wrongCnt').textContent = wrong.size?('('+wrong.size+')'):'';
+  $('clearWrongWrap').style.display=(studyTab==='wrong'&&wrong.size)?'block':'none';
+  const list = studyTab==='wrong' ? [...wrong].map(i=>ITEMS[i]).filter(Boolean) : ITEMS;
+  const box=$('studyList'); box.innerHTML='';
+  if(!list.length){ box.innerHTML='<div class="studyempty">'+(studyTab==='wrong'?'아직 틀린 게 없어요! 완벽해요 👏<br><span style="font-size:13px">퀴즈에서 틀린 표현이 여기에 모여요.</span>':'표현이 없어요.')+'</div>'; return; }
+  list.forEach(it=>{ const d=document.createElement('div'); d.className='scard';
+    const tg=tagOf(it);
+    d.innerHTML=`<div class="sen"><button class="playline">🔊</button> ${esc(it.en)}<span class="sday">${esc(tg.label)}</span></div><div class="sko">${esc(it.ko)}</div><div class="sex">📝 ${esc(it.ex)}<br>${esc(it.exko)}</div>`;
+    d.querySelector('.playline').onclick=e=>{e.stopPropagation();speak(it.ex);};
+    box.appendChild(d); });
+}
+
+/* ============ Wiring ============ */
+$('openStudy').onclick=()=>openStudy('all'); $('sHome').onclick=goHome;
+$('tabAll').onclick=()=>{studyTab='all';renderStudy();}; $('tabWrong').onclick=()=>{studyTab='wrong';renderStudy();};
+$('clearWrong').onclick=()=>{wrong.clear();saveWrong();renderStudy();};
+document.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const m=t.dataset.mode;
+  if(m==='quest')startQL('mc'); else if(m==='listen')startQL('listen');
+  else if(m==='dict')startQL('dict'); else if(m==='situ')startQL('situ'); else if(m==='match')startSwipe(); else if(m==='room')enterRoom();
+  else if(m==='time'){ LEADERBOARD_URL?openTimeStart():startTime(); } });
+$('qlHome').onclick=()=>goHome(); $('mHome').onclick=()=>{clearInterval(mm&&mm.timer);goHome();}; $('tHome').onclick=()=>{clearInterval(ta&&ta.timer);goHome();};
+$('qlPrev').onclick=qlPrev; $('qlNext').onclick=qlNext;
+$('compoCheck').onclick=checkCompo; $('compoSkip').onclick=skipCompo; $('compoReset').onclick=resetCompo;
+$('rpTabF').onclick=()=>{pickSex='f';renderCharGrid();ac();sfx.coin();};
+$('rpTabM').onclick=()=>{pickSex='m';renderCharGrid();ac();sfx.coin();};
+$('rpHome').onclick=goHome; $('rpStart').onclick=()=>{ room.char=pickChar||CHARS[0].id; saveRoom(); startRoom(); };
+$('rmHome').onclick=()=>{stopSpeak();goHome();}; $('rmNext').onclick=rmNextClick; $('rmAgain').onclick=startRoom;
+$('rmDoneHome').onclick=goHome; $('rmChangeChar').onclick=openCharPick;
+$('rmReset').onclick=()=>{ if(confirm('방을 처음부터 새로 꾸밀까요? (책과 아이템이 모두 사라져요)')){ room={char:room.char,owned:[],books:0}; saveRoom(); paintRoom(); startRoom(); } };
+$('swHome').onclick=goHome; $('swYes').onclick=()=>pickSW(true); $('swNo').onclick=()=>pickSW(false);
+$('tsHome').onclick=goHome; $('tsStart').onclick=()=>{ startTime(); }; $('tsRank').onclick=showRankingOnly;
+$('homeRankMore').onclick=showRankingOnly; $('deleteMyRank').onclick=deleteMyRank;
+$('ngStart').onclick=confirmNick;
+$('ngNick').addEventListener('keydown',e=>{ if(e.key==='Enter') confirmNick(); });
+$('resetCoins').onclick=()=>{ if(confirm('내 코인을 0으로 초기화할까요? (랭킹 기록은 그대로예요)')){ coins=0; saveCoins(); updateWallet(); } };
+$('rAgain'); $('rHome').onclick=()=>goHome();
+function goHome(){ if(window.speechSynthesis)speechSynthesis.cancel(); updateWallet(); paintNickChip(); show('home'); loadHomeRanks(); }
+function submitCoins(){ const nick=getNick(); if(!nick||!LEADERBOARD_URL||coins<=0)return Promise.resolve(); return jsonp({action:'submit',nick,score:coins,mode:MODE_COINS}); }
+async function deleteMyRank(){
+  const nick=getNick(); if(!nick){ $('rankStatus').textContent='등록된 닉네임이 없어요'; return; }
+  if(!confirm('"'+nick+'" 기록을 랭킹에서 모두 삭제할까요? (되돌릴 수 없어요)')) return;
+  $('rankStatus').textContent='삭제 중... ⏳';
+  await jsonp({action:'delete',nick});
+  coins=0; saveCoins(); updateWallet();
+  try{localStorage.removeItem('lt_nick');}catch(e){}   // 닉네임 초기화 → 새 닉네임으로 재도전 가능
+  $('nickInput').value='';
+  $('rankStatus').textContent='기록을 삭제했어요! 새 닉네임을 정해 주세요 🎮';
+  $('deleteMyRank').style.display='none';
+  setTimeout(()=>openNickGate(),900);
+}
+/* ============ 닉네임 게이트 ============ */
+function paintNickChip(){ const n=getNick(), c=$('nickChip'); if(!c)return;
+  if(n){ c.style.display='inline-block'; c.innerHTML='🙋 '+esc(n)+' <span id="nickEdit" style="cursor:pointer;opacity:.65">✏️</span>';
+    const e=$('nickEdit'); if(e) e.onclick=()=>openNickGate(true); }
+  else c.style.display='none'; }
+function openNickGate(edit){ setSophie($('ngSophie'),'idle'); $('ngNick').value=edit?getNick():''; $('ngMsg').textContent=''; show('nickGate'); setTimeout(()=>{try{$('ngNick').focus();}catch(e){}},250); }
+function confirmNick(){ const n=($('ngNick').value||'').trim().slice(0,12);
+  if(!n){ $('ngMsg').textContent='닉네임을 한 글자 이상 적어 주세요 🙂'; return; }
+  setNick(n); paintNickChip(); ac(); try{sfx.coin();}catch(e){} goHome(); }
+function renderMini(olId,list){
+  const ol=$(olId), me=getNick(); ol.innerHTML='';
+  if(!list||!Array.isArray(list)){ ol.innerHTML='<li class="hr-empty">불러올 수 없어요 😢</li>'; return; }
+  if(!list.length){ ol.innerHTML='<li class="hr-empty">아직 기록이 없어요. 1등에 도전! 🥇</li>'; return; }
+  list.slice(0,3).forEach((r,i)=>{ const li=document.createElement('li');
+    li.innerHTML=`<span class="rk">${i===0?'🥇':i===1?'🥈':'🥉'}</span><span class="nm">${esc(r.nick)}${r.nick===me?' (나)':''}</span><span class="sc">${r.score}</span>`;
+    ol.appendChild(li); });
+}
+async function loadHomeRanks(){
+  if(!LEADERBOARD_URL){ ['homeRankTime','homeRankCoin','homeRankMoreWrap'].forEach(id=>{const e=$(id);if(e)e.style.display='none';}); return; }
+  ['homeRankTime','homeRankCoin','homeRankMoreWrap'].forEach(id=>{const e=$(id);if(e)e.style.display='block';});
+  if(!$('homeRankTimeList').children.length)$('homeRankTimeList').innerHTML='<li class="hr-empty">불러오는 중... ⏳</li>';
+  if(!$('homeRankCoinList').children.length)$('homeRankCoinList').innerHTML='<li class="hr-empty">불러오는 중... ⏳</li>';
+  // 홈에서는 읽기만 (코인 재등록 X → 시트에서 지운 기록이 되살아나지 않음). 코인 등록은 게임 끝났을 때만.
+  const [t,c]=await Promise.all([jsonp({action:'top',mode:MODE_TIME,n:3}), jsonp({action:'top',mode:MODE_COINS,n:3})]);
+  renderMini('homeRankTimeList',t); renderMini('homeRankCoinList',c);
+}
+function refreshSoundBtns(){['muteBtn0','muteBtn1','muteBtn2','muteBtn3','muteBtn4','muteBtn5','muteBtn6','muteBtn7','muteBtn8'].forEach(x=>{const e=$(x);if(e){e.textContent=muted?'🔇 OFF':'🔊 ON';e.classList.toggle('on',!muted);e.classList.toggle('off',muted);}});}
+['muteBtn0','muteBtn1','muteBtn2','muteBtn3','muteBtn4','muteBtn5','muteBtn6','muteBtn7','muteBtn8'].forEach(id=>{const b=$(id);if(b)b.onclick=()=>{muted=!muted;if(muted)stopSpeak();refreshSoundBtns();if(!muted){ac();sfx.coin();}};});
+setInterval(()=>{const s=$('homeSophie');if($('home').classList.contains('active')){s.classList.add('bounce');setTimeout(()=>s.classList.remove('bounce'),500);}},2800);
+updateWallet(); paintNickChip();
+if(getNick()) loadHomeRanks(); else openNickGate();
+</script>
+</body>
+</html>
