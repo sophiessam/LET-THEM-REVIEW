@@ -236,6 +236,18 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
 .nickbtn{font-family:'Jua','Gaegu',system-ui,sans-serif;font-size:14px;background:#eafff1;border:3px solid var(--deep);
   border-radius:999px;padding:5px 13px;margin-left:6px;color:var(--ink);white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;max-width:130px;box-shadow:0 3px 0 rgba(0,0,0,.14);}
+.compo-tools{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;}
+.ctool{font-family:'Jua';font-size:13.5px;padding:11px 3px;border-radius:14px;border:3px solid var(--deep);
+  background:#fff;color:var(--deep);cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.14);transition:transform .07s;}
+.ctool:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.14);}
+.ctool:disabled{opacity:.45;box-shadow:0 4px 0 rgba(0,0,0,.08);}
+.ctool.play{background:#e4efff;} .ctool.hint{background:#fff5d4;} .ctool.ans{background:#ffe6e6;}
+.ctool.playing{animation:micpulse 1s ease-in-out infinite;}
+.ghostbtn.go{background:#ffd76a;border-color:var(--deep);color:var(--deep);font-weight:700;}
+.ansline{margin-top:10px;background:#fff;border:3px solid var(--green);border-radius:14px;padding:10px 12px;
+  font-family:'Jua';font-size:15.5px;color:var(--deep);line-height:1.5;display:none;}
+.ansline .lb{display:block;font-size:12px;color:var(--grey);margin-bottom:2px;}
+.ansline .ko{display:block;font-size:13.5px;color:var(--grey);margin-top:3px;}
 .microw{display:flex;align-items:center;gap:9px;margin-top:10px;}
 .micbtn{flex:none;width:54px;height:54px;border-radius:50%;border:4px solid var(--deep);background:#fff3d6;
   font-size:24px;line-height:1;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.16);transition:transform .07s;}
@@ -430,6 +442,12 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
           <div class="compo-answer" id="compoAnswer"></div>
           <button class="resetbtn" id="compoReset">↺ 처음부터</button>
           <div class="compo-bank" id="compoBank"></div>
+          <div class="compo-tools">
+            <button class="ctool play" id="compoPlay">🔊 듣기</button>
+            <button class="ctool hint" id="compoHint">💡 힌트</button>
+            <button class="ctool ans" id="compoAns">👀 정답</button>
+          </div>
+          <div class="ansline" id="ansLine"></div>
           <div class="microw" id="micRow" style="display:none">
             <button class="micbtn" id="micBtn" title="말해서 영작하기">🎤</button>
             <div class="michelp" id="micHelp">🎤 를 누르고 <b>영어로 말해보세요!</b><br>말한 대로 단어가 자동으로 채워져요.</div>
@@ -1769,6 +1787,10 @@ function startComposition(it,cb){
   $('qlReveal').style.display='none'; $('qlPrev').style.display='none'; $('qlNext').style.display='none';
   $('compoMsg').textContent=''; $('compoKo').textContent='“'+it.exko+'”'; $('compo').classList.remove('done'); $('compo').style.display='block';
   $('heardBox').style.display='none'; $('heardTxt').textContent=''; micStop();
+  $('ansLine').style.display='none'; compo.hint=0; compo.revealed=false;
+  $('compoCheck').style.display=''; $('compoHint').style.display=''; $('compoAns').style.display='';
+  $('compoReset').style.display=''; $('compoHint').disabled=false;
+  $('compoSkip').textContent='영작 없이 넘어가기 ⏭️'; $('compoSkip').classList.remove('go');
   $('micRow').style.display = SR ? 'flex' : 'none';
   renderCompo();
 }
@@ -1832,6 +1854,38 @@ function checkCompo(){
     setTimeout(()=>{const cb=onCompoEnd;compo=null;onCompoEnd=null;$('compo').style.display='none';cb&&cb('success');},750);
   }else{shakeCompo('순서를 다시 확인해봐! 🔁');sfx.wrong();}
 }
+/* ---- 🔊 듣기 · 💡 힌트 · 👀 정답 ---- */
+function playCompo(){ if(!compo)return; const b=$('compoPlay'); b.classList.add('playing');
+  speak(compo.it.ex); setTimeout(()=>b.classList.remove('playing'),1800); }
+function hintCompo(){
+  if(!compo||compoLocked)return;
+  compo.hint=(compo.hint||0)+1;
+  if(compo.hint===1){
+    $('compoMsg').innerHTML='💡 첫 단어는 <b>'+esc(compo.target[0])+'</b> 로 시작해요. 한 번 더 누르면 앞부분을 채워줄게요!';
+    speak(compo.target[0]);
+  } else {
+    const half=Math.max(1,Math.ceil(compo.target.length/2));
+    const pool=compo.target.map((w,i)=>({w,i}));
+    compo.ans=pool.slice(0,half); compo.bank=shuffle(pool.slice(half));
+    renderCompo();
+    $('compoMsg').innerHTML='💡 앞부분을 채워줬어요! 나머지를 완성해보세요 💪';
+    $('compoHint').disabled=true;
+  }
+  sfx.coin();
+}
+function revealCompo(){
+  if(!compo||compoLocked)return;
+  micStop(); compoLocked=true; compo.revealed=true;
+  compo.ans=compo.target.map((w,i)=>({w,i})); compo.bank=[]; renderCompo();
+  $('compo').classList.add('done');
+  $('ansLine').innerHTML='<span class="lb">👀 정답</span>'+esc(compo.it.ex)+'<span class="ko">'+esc(compo.it.exko)+'</span>';
+  $('ansLine').style.display='block';
+  $('compoMsg').textContent='정답을 확인했어요. 소리 내어 한 번 따라 읽어볼까요? 🗣️';
+  speak(compo.it.ex);
+  $('compoCheck').style.display='none'; $('compoHint').style.display='none'; $('compoAns').style.display='none';
+  $('compoReset').style.display='none'; $('micRow').style.display='none';
+  $('compoSkip').textContent='다음 ▶'; $('compoSkip').classList.add('go');
+}
 /* ---- 🎤 말해서 영작하기 ---- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let rec=null, recOn=false;
@@ -1878,7 +1932,7 @@ function startMic(){
   }catch(err){ micReset(); $('compoMsg').textContent='음성 인식을 시작할 수 없어요 😢'; }
 }
 function shakeCompo(msg){const el=$('compo');el.classList.remove('shk');void el.offsetWidth;el.classList.add('shk');$('compoMsg').textContent=msg;}
-function skipCompo(){ if(compoLocked||!compo)return; micStop(); stopSpeak(); const cb=onCompoEnd;compo=null;onCompoEnd=null;$('compo').style.display='none';cb&&cb('skip'); }
+function skipCompo(){ if(!compo || (compoLocked && !compo.revealed))return; micStop(); stopSpeak(); const cb=onCompoEnd;compo=null;onCompoEnd=null;$('compo').style.display='none';cb&&cb('skip'); }
 
 /* ============ QUEST / LISTEN engine ============ */
 let ql=null, qlLastGain=0;
@@ -2476,6 +2530,7 @@ document.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const m=t.dataset.
   else if(m==='time'){ LEADERBOARD_URL?openTimeStart():startTime(); } });
 $('qlHome').onclick=()=>goHome(); $('mHome').onclick=()=>{clearInterval(mm&&mm.timer);goHome();}; $('tHome').onclick=()=>{clearInterval(ta&&ta.timer);goHome();};
 $('qlPrev').onclick=qlPrev; $('qlNext').onclick=qlNext;
+$('compoPlay').onclick=playCompo; $('compoHint').onclick=hintCompo; $('compoAns').onclick=revealCompo;
 $('micBtn').onclick=startMic;
 $('compoCheck').onclick=checkCompo; $('compoSkip').onclick=skipCompo; $('compoReset').onclick=resetCompo;
 $('rpTabF').onclick=()=>{pickSex='f';renderCharGrid();ac();sfx.coin();};
