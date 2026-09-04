@@ -2032,16 +2032,16 @@ function finalizeQL(q){ showQLReveal(q); $('qlReveal').style.display=''; $('qlPr
   $('qlPrev').disabled=ql.qi===0; $('qlNext').textContent=(ql.frontier+1>=ql.total)?'결과 보기 🏁':'다음 ▶'; }
 function showQLReveal(q){const it=q.it;
   if(ql.mode==='dict'){
-    $('qlReveal').innerHTML=`<span class="en">${esc(it.ans)}</span><br><span class="exko">📝 <button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.full)}<br>${esc(it.ko)}</span>`;
+    $('qlReveal').innerHTML=`<span class="en">${esc(it.ans)}</span><br><span class="exko"><button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.full)}<br>${esc(it.ko)}</span>`;
     const pb0=$('qlPlay'); if(pb0) pb0.onclick=()=>{pb0.classList.add('playing');speak(it.full);setTimeout(()=>pb0.classList.remove('playing'),1800);};
     return;
   }
   if(ql.mode==='situ'){
-    $('qlReveal').innerHTML=`<span class="en">${esc(it.ans)}</span><br><span class="exko">📝 <button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.ko)}</span>`;
+    $('qlReveal').innerHTML=`<span class="en">${esc(it.ans)}</span><br><span class="exko"><button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.ko)}</span>`;
     const pb1=$('qlPlay'); if(pb1) pb1.onclick=()=>{pb1.classList.add('playing');speak(it.ans);setTimeout(()=>pb1.classList.remove('playing'),1800);};
     return;
   }
-  $('qlReveal').innerHTML=`<span class="en">${esc(it.en)}</span> — ${esc(it.ko)}<br><span class="exko">📝 <button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.ex)}<br>${esc(it.exko)}</span>`;
+  $('qlReveal').innerHTML=`<span class="en">${esc(it.en)}</span> — ${esc(it.ko)}<br><span class="exko"><button class="playline" id="qlPlay" title="문장 듣기">🔊</button> ${esc(it.ex)}<br>${esc(it.exko)}</span>`;
   const pb=$('qlPlay'); if(pb) pb.onclick=()=>{pb.classList.add('playing');speak(it.ex);setTimeout(()=>pb.classList.remove('playing'),1400);};
 }
 function updateQLCombo(){$('qlCombo').textContent='COMBO '+ql.combo;$('qlCombo').style.background=ql.combo>=3?'var(--orange)':(ql.combo>=2?'var(--green2)':'var(--green)');}
@@ -2221,7 +2221,7 @@ function pickRM(btn,o,q){
   if(rm.lock)return; rm.lock=true;
   const btns=[...$('rmOpts').querySelectorAll('.opt')]; btns.forEach(b=>b.disabled=true);
   const ct=q.opts.find(x=>x.ok).t;
-  $('rmReveal').innerHTML=`<span class="en">${esc(q.it.en)}</span> — ${esc(q.it.ko)}<br><span class="exko">📝 ${esc(q.it.ex)}<br>${esc(q.it.exko)}</span>`;
+  $('rmReveal').innerHTML=`<span class="en">${esc(q.it.en)}</span> — ${esc(q.it.ko)}<br><span class="exko">${esc(q.it.ex)}<br>${esc(q.it.exko)}</span>`;
   if(o.ok){
     btn.classList.add('correct'); btns.forEach(b=>{if(b!==btn)b.classList.add('dim');});
     rm.correct++; room.books++; saveRoom(); paintRoom(true);
@@ -2515,7 +2515,7 @@ function renderStudy(){
   if(!list.length){ box.innerHTML='<div class="studyempty">'+(studyTab==='wrong'?'아직 틀린 게 없어요! 완벽해요 👏<br><span style="font-size:13px">퀴즈에서 틀린 표현이 여기에 모여요.</span>':'표현이 없어요.')+'</div>'; return; }
   list.forEach(it=>{ const d=document.createElement('div'); d.className='scard';
     const tg=tagOf(it);
-    d.innerHTML=`<div class="sen"><button class="playline">🔊</button> ${esc(it.en)}<span class="sday">${esc(tg.label)}</span></div><div class="sko">${esc(it.ko)}</div><div class="sex">📝 ${esc(it.ex)}<br>${esc(it.exko)}</div>`;
+    d.innerHTML=`<div class="sen"><button class="playline">🔊</button> ${esc(it.en)}<span class="sday">${esc(tg.label)}</span></div><div class="sko">${esc(it.ko)}</div><div class="sex">${esc(it.ex)}<br>${esc(it.exko)}</div>`;
     d.querySelector('.playline').onclick=e=>{e.stopPropagation();speak(it.ex);};
     box.appendChild(d); });
 }
