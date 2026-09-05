@@ -84,7 +84,23 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
 .ritem,.bookpop{transform-box:fill-box;transform-origin:50% 100%;}
 .ritem.pop,.bookpop{animation:ripop .55s cubic-bezier(.2,1.5,.4,1);}
 @keyframes ripop{0%{transform:scale(.2) translateY(12px);opacity:0}62%{transform:scale(1.14)}100%{transform:none;opacity:1}}
-.rm-pick{background:#fff8e8;border:3px dashed var(--orange);border-radius:16px;padding:12px;margin-bottom:10px;}
+.rm-edit{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin:6px 0 2px;}
+.editbtn{font-family:'Jua',system-ui,sans-serif;font-size:13px;color:var(--deep);background:#fff;
+  border:2.5px solid var(--deep);border-radius:12px;padding:5px 12px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.15);}
+.editbtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.15);}
+.editbtn.on{background:var(--orange);color:#fff;}
+.editbtn.ghost{border-color:#c9c4bb;color:#7a7a76;box-shadow:none;font-size:12.5px;padding:4px 10px;}
+.edithint{width:100%;text-align:center;font-size:12.5px;color:var(--orange);font-family:'Jua',system-ui,sans-serif;}
+#room.picking .rm-edit{display:none;}
+#room.editing #roomSvg{touch-action:none;}
+#room.editing .ritem,#room.editing #charG{cursor:grab;}
+#room.editing .ritem,#room.editing #charG{filter:drop-shadow(0 0 2.5px #ff8a3d);}
+#room.editing .dragging{cursor:grabbing;filter:drop-shadow(0 0 5px #ff6a1d);}
+.rm-pick{background:#fff8e8;border:3px dashed var(--orange);border-radius:16px;padding:10px;margin:8px 0 4px;animation:pop .3s cubic-bezier(.2,1.4,.5,1);}
+/* 아이템 고를 때는 방 + 아이템이 한 화면에 들어오도록 방 그림을 살짝 줄임 */
+#room.picking .rm-scene{max-width:min(100%,calc(42vh * 1.362));margin:0 auto;}
+#room.picking .rm-title{margin:2px 0 2px;font-size:15px;}
+#room.picking .rm-info{margin:5px 0 2px;font-size:12.5px;}
 .rm-pick-h{font-family:'Jua';font-size:15px;color:var(--deep);text-align:center;margin-bottom:10px;}
 .rm-pick-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .rm-item{background:#fff;border:4px solid var(--deep);border-radius:16px;padding:12px 4px;cursor:pointer;
@@ -537,10 +553,11 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
           <circle cx="192" cy="34" r="14" fill="#fff" stroke="#3a3a38" stroke-width="3"/>
           <path d="M192,34 V25 M192,34 l7,4" stroke="#3a3a38" stroke-width="2.5" stroke-linecap="round"/>
         </g>
-        <rect x="210" y="40" width="96" height="110" rx="4" fill="#c1834a" stroke="#3a3a38" stroke-width="3"/>
-        <rect x="214" y="44" width="88" height="102" fill="#8f5f34"/>
-        <rect x="214" y="72" width="88" height="5" fill="#c1834a"/>
-        <rect x="214" y="106" width="88" height="5" fill="#c1834a"/>
+        <rect x="210" y="18" width="96" height="132" rx="4" fill="#c1834a" stroke="#3a3a38" stroke-width="3"/>
+        <rect x="214" y="22" width="88" height="124" fill="#8f5f34"/>
+        <rect x="214" y="49" width="88" height="5" fill="#c1834a"/>
+        <rect x="214" y="81" width="88" height="5" fill="#c1834a"/>
+        <rect x="214" y="113" width="88" height="5" fill="#c1834a"/>
         <g id="bookG"></g>
         <g id="ri-bed" class="ritem" style="display:none">
           <rect x="4" y="94" width="14" height="58" rx="5" fill="#b07a45" stroke="#3a3a38" stroke-width="2.5"/>
@@ -597,6 +614,7 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
           <ellipse cx="176.0" cy="183.0" rx="2.7" ry="1.9" fill="#d8b8ee" transform="rotate(0 176.0 183.0)"/><ellipse cx="174.0" cy="185.4" rx="2.7" ry="1.9" fill="#d8b8ee" transform="rotate(60 174.0 185.4)"/><ellipse cx="170.0" cy="185.4" rx="2.7" ry="1.9" fill="#d8b8ee" transform="rotate(120 170.0 185.4)"/><ellipse cx="168.0" cy="183.0" rx="2.7" ry="1.9" fill="#d8b8ee" transform="rotate(180 168.0 183.0)"/><ellipse cx="170.0" cy="180.6" rx="2.7" ry="1.9" fill="#d8b8ee" transform="rotate(240 170.0 180.6)"/><ellipse cx="174.0" cy="180.6" rx="2.7" ry="1.9" fill="#d8b8ee" transform="rotate(300 174.0 180.6)"/><circle cx="172.0" cy="183.0" r="1.9" fill="#9a6bd0"/>
           <ellipse cx="153.7" cy="167.0" rx="2.5" ry="1.8" fill="#ffc9a8" transform="rotate(0 153.7 167.0)"/><ellipse cx="151.9" cy="169.2" rx="2.5" ry="1.8" fill="#ffc9a8" transform="rotate(60 151.9 169.2)"/><ellipse cx="148.1" cy="169.2" rx="2.5" ry="1.8" fill="#ffc9a8" transform="rotate(120 148.1 169.2)"/><ellipse cx="146.3" cy="167.0" rx="2.5" ry="1.8" fill="#ffc9a8" transform="rotate(180 146.3 167.0)"/><ellipse cx="148.1" cy="164.8" rx="2.5" ry="1.8" fill="#ffc9a8" transform="rotate(240 148.1 164.8)"/><ellipse cx="151.9" cy="164.8" rx="2.5" ry="1.8" fill="#ffc9a8" transform="rotate(300 151.9 164.8)"/><circle cx="150.0" cy="167.0" r="1.8" fill="#f08a5a"/>
         </g>
+        <g id="bookFloorG"></g>
         <g id="ri-console" class="ritem" transform="translate(187,31)" style="display:none">
           <rect x="38" y="164" width="36" height="21" rx="5" fill="#5a6cf0" stroke="#3a3a38" stroke-width="2.5"/>
           <circle cx="47" cy="174" r="3.2" fill="#fff"/><circle cx="65" cy="171" r="2.6" fill="#ffd98a"/><circle cx="65" cy="178" r="2.6" fill="#f08a8a"/>
@@ -640,7 +658,16 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
         </g>
       </svg>
     </div>
+    <div class="rm-edit">
+      <button class="editbtn" id="rmEditBtn">✏️ 아이템 위치 바꾸기</button>
+      <button class="editbtn ghost" id="rmPosReset" style="display:none">↺ 처음 자리로</button>
+      <div class="edithint" id="rmEditHint" style="display:none">아이템을 <b>끌어서</b> 원하는 자리에 놓아보세요! 🖐️</div>
+    </div>
     <div class="rm-info" id="rmInfo"></div>
+    <div class="rm-pick" id="rmPick" style="display:none">
+      <div class="rm-pick-h">🎁 아이템을 하나 골라 방에 놓아보자!</div>
+      <div class="rm-pick-btns" id="rmPickBtns"></div>
+    </div>
     <div class="prog"><i id="rmProg"></i></div>
     <div class="card" id="rmQuizCard">
       <span class="qtag" id="rmTag">EXPRESSION</span>
@@ -649,10 +676,6 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
       <div class="qmain" id="rmMain"></div>
       <div class="opts" id="rmOpts"></div>
       <div class="answerbar" id="rmAnswer">
-        <div class="rm-pick" id="rmPick" style="display:none">
-          <div class="rm-pick-h">🎁 아이템을 하나 골라 방에 놓아보자!</div>
-          <div class="rm-pick-btns" id="rmPickBtns"></div>
-        </div>
         <div class="echotip" id="rmEcho"><span class="em">🗣️</span>따라 말해보세요!<span class="sub">소리 내어 한 번 읽으면 훨씬 오래 기억나요</span></div>
         <div class="reveal" id="rmReveal"></div>
         <div class="navbtns"><button class="bigbtn" id="rmNext">다음 ▶</button></div>
@@ -2139,18 +2162,21 @@ function charSVG(c,sit){ return `
   <ellipse cx="29.2" cy="21.2" rx="2.7" ry="1.9" fill="#ffb0b0" opacity=".9"/>
   <path d="M16.4,22.6 q2.6,2.6 5.2,0" stroke="#3a3a38" stroke-width="1.7" fill="none" stroke-linecap="round"/>`; }
 function loadRoom(){ try{const r=JSON.parse(localStorage.getItem(K_ROOM)||'null');
-    if(r&&Array.isArray(r.owned)) return {char:r.char||'', owned:r.owned, books:r.books||0}; }catch(e){}
-  return {char:'', owned:[], books:0}; }
+    if(r&&Array.isArray(r.owned)) return {char:r.char||'', owned:r.owned, books:r.books||0, pos:r.pos||{}}; }catch(e){}
+  return {char:'', owned:[], books:0, pos:{}}; }
 function saveRoom(){ try{localStorage.setItem(K_ROOM,JSON.stringify(room));}catch(e){} }
 let room=loadRoom();
-const BOOK_BOT=[72,106,147], BOOK_COL=['#e05a5a','#f0a63c','#3fb56d','#4a8ff0','#a06bd8','#f07ab0','#3fc0c0','#f7c948'];
+/* 책장: 4단 × 4권 = 16권. 그 이후는 책장 앞 바닥에 쌓임 */
+const BOOK_BOT=[49,81,113,146], BOOK_COL=['#e05a5a','#f0a63c','#3fb56d','#4a8ff0','#a06bd8','#f07ab0','#3fc0c0','#f7c948'];
+const SHELF_MAX=16, FLOOR_PILE=[{x:214,base:176},{x:274,base:174}], FLOOR_LV=4, FLOOR_TH=5.5,
+      FLOOR_MAX=FLOOR_PILE.length*FLOOR_LV;
 const SVGNS='http://www.w3.org/2000/svg';
 function svgEl(tag,at,tx){ const e=document.createElementNS(SVGNS,tag);
   for(const k in at) e.setAttribute(k,at[k]); if(tx!=null) e.textContent=tx; return e; }
 function paintRoom(popLast){
-  ROOM_ITEMS.forEach(it=>{const g=$('ri-'+it.id); if(g) g.style.display = room.owned.includes(it.id)?'':'none';});
+  ROOM_ITEMS.forEach(it=>{const g=$('ri-'+it.id); if(g){ g.style.display = room.owned.includes(it.id)?'':'none'; applyPos(it.id); }});
   const bg=$('bookG'); if(bg){ bg.innerHTML='';
-    const n=Math.min(room.books,12);
+    const n=Math.min(room.books,SHELF_MAX);
     for(let i=0;i<n;i++){ const sh=Math.floor(i/4), idx=i%4;
       const x=216+idx*22, y=BOOK_BOT[sh]-25;
       if(i===0){   // 첫 번째 책 = 우리 원서 The Let Them Theory
@@ -2168,13 +2194,80 @@ function paintRoom(popLast){
       const r=svgEl('rect',{x,y,width:18,height:25,rx:2,fill:BOOK_COL[i%BOOK_COL.length],stroke:'#3a3a38','stroke-width':2});
       if(popLast && i===n-1) r.setAttribute('class','bookpop');
       bg.appendChild(r); } }
+  /* 책장이 다 차면 책장 앞 바닥에 눕혀서 쌓기 */
+  const fg=$('bookFloorG'); if(fg){ fg.innerHTML='';
+    const extra=Math.max(0,room.books-SHELF_MAX), nf=Math.min(extra,FLOOR_MAX);
+    for(let j=0;j<nf;j++){
+      const P=FLOOR_PILE[j%FLOOR_PILE.length], lv=Math.floor(j/FLOOR_PILE.length);
+      const w=(lv%2)?25:28, x=P.x+((lv%2)?2:0), y=P.base-(lv+1)*FLOOR_TH;
+      const g=svgEl('g',{});
+      g.appendChild(svgEl('rect',{x,y,width:w,height:FLOOR_TH,rx:1.6,
+        fill:BOOK_COL[(SHELF_MAX+j)%BOOK_COL.length],stroke:'#3a3a38','stroke-width':2}));
+      g.appendChild(svgEl('rect',{x:x+2,y:y+1.9,width:w-4,height:1.2,rx:.6,fill:'rgba(255,255,255,.55)'}));
+      if(popLast && j===nf-1) g.setAttribute('class','bookpop');
+      fg.appendChild(g); }
+    if(extra>FLOOR_MAX){ const lab='+'+(extra-FLOOR_MAX)+'권', w=Math.max(30,lab.length*7.2);
+      fg.appendChild(svgEl('rect',{x:228-w/2,y:179,width:w,height:13,rx:6.5,
+        fill:'#fffdf5',stroke:'#3a3a38','stroke-width':1.8}));
+      fg.appendChild(svgEl('text',{x:228,y:188.4,'font-family':"'Jua',sans-serif",
+        'font-size':9,fill:'#6b4f34','text-anchor':'middle'},lab)); } }
   const cg=$('charG');
   if(cg){ const onSofa=room.owned.includes('sofa');
     cg.innerHTML=charSVG(CHARS.find(c=>c.id===room.char)||CHARS[0], onSofa);
-    cg.setAttribute('transform', onSofa?'translate(41,160)':'translate(96,126)'); }
+    cg.dataset.base = onSofa?'translate(41,160)':'translate(96,126)';
+    applyPos('__char'); }
   const s2=$('ri-sofa2'); if(s2) s2.style.display = room.owned.includes('sofa')?'':'none';
   const bp=$('rmBooks'); if(bp) bp.textContent='📚 '+room.books;
 }
+/* ============ ✏️ 아이템 위치 옮기기 ============ */
+function posEl(id){ return id==='__char' ? $('charG') : $('ri-'+id); }
+function baseOf(g){ if(g.dataset.base==null) g.dataset.base=g.getAttribute('transform')||''; return g.dataset.base; }
+function baseXY(g){ const m=/translate\(\s*(-?[\d.]+)[\s,]+(-?[\d.]+)/.exec(baseOf(g)); return m?[+m[1],+m[2]]:[0,0]; }
+function getPos(id){ const p=(room.pos||{})[id]; return p?[+p[0]||0,+p[1]||0]:[0,0]; }
+function applyPos(id){ const g=posEl(id); if(!g)return; const b=baseOf(g), p=getPos(id);
+  const t=(b+((p[0]||p[1])?(' translate('+p[0].toFixed(1)+','+p[1].toFixed(1)+')'):'')).trim();
+  if(t) g.setAttribute('transform',t); else g.removeAttribute('transform'); }
+let rmEdit=false, rmDrag=null;
+function setRoomEdit(on){
+  rmEdit=!!on; const sc=$('room'); if(sc) sc.classList.toggle('editing',rmEdit);
+  const b=$('rmEditBtn'); if(b){ b.classList.toggle('on',rmEdit); b.textContent=rmEdit?'✅ 다 옮겼어요':'✏️ 아이템 위치 바꾸기'; }
+  const r=$('rmPosReset'); if(r) r.style.display=rmEdit?'':'none';
+  const h=$('rmEditHint'); if(h) h.style.display=rmEdit?'':'none';
+  if(!rmEdit && rmDrag){ rmDrag.g.classList.remove('dragging'); rmDrag=null; }
+}
+function svgPt(ev){ const svg=$('roomSvg'), m=svg.getScreenCTM(); if(!m) return null;
+  const p=svg.createSVGPoint(); p.x=ev.clientX; p.y=ev.clientY; return p.matrixTransform(m.inverse()); }
+function initRoomDrag(){
+  const svg=$('roomSvg'); if(!svg||svg.dataset.dragon)return; svg.dataset.dragon='1';
+  svg.addEventListener('pointerdown',ev=>{
+    if(!rmEdit)return;
+    let g=ev.target.closest ? ev.target.closest('g.ritem') : null;
+    if(!g){ const c=$('charG'); if(c&&c.contains(ev.target)) g=c; }
+    if(!g||g.style.display==='none')return;
+    const id = g.id==='charG' ? '__char' : g.id.slice(3);
+    const st=svgPt(ev); if(!st)return;
+    let bb; try{ bb=g.getBBox(); }catch(e){ bb={x:0,y:0,width:20,height:20}; }
+    const bxy=baseXY(g), p=getPos(id);
+    rmDrag={id,g,sx:st.x,sy:st.y,dx0:p[0],dy0:p[1],
+      minX:2-(bb.x+bxy[0]), maxX:318-(bb.x+bxy[0]+bb.width),
+      minY:2-(bb.y+bxy[1]), maxY:233-(bb.y+bxy[1]+bb.height)};
+    g.classList.add('dragging');
+    try{ svg.setPointerCapture(ev.pointerId); }catch(e){}
+    ev.preventDefault();
+  });
+  svg.addEventListener('pointermove',ev=>{
+    if(!rmEdit||!rmDrag)return; const q=svgPt(ev); if(!q)return;
+    const cl=(v,a,b)=>(a>b)?(a+b)/2:Math.max(a,Math.min(b,v));
+    const dx=cl(rmDrag.dx0+(q.x-rmDrag.sx),rmDrag.minX,rmDrag.maxX);
+    const dy=cl(rmDrag.dy0+(q.y-rmDrag.sy),rmDrag.minY,rmDrag.maxY);
+    room.pos=room.pos||{}; room.pos[rmDrag.id]=[dx,dy]; applyPos(rmDrag.id); ev.preventDefault();
+  });
+  const end=ev=>{ if(!rmDrag)return; rmDrag.g.classList.remove('dragging'); rmDrag=null;
+    saveRoom(); try{ $('roomSvg').releasePointerCapture(ev.pointerId); }catch(e){} };
+  svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end);
+}
+function resetRoomPos(){ const ids=Object.keys(room.pos||{}); room.pos={}; saveRoom();
+  ids.forEach(applyPos); sfx.coin(); }
 /* --- 캐릭터 선택 --- */
 let pickChar='';
 function enterRoom(){ if(room.char) startRoom(); else openCharPick(); }
@@ -2215,7 +2308,7 @@ function startRoom(){
   ac(); if(!room.char){ room.char=pickChar||CHARS[0].id; saveRoom(); }
   rm={deck:shuffle(ITEMS).slice(0,RM_N).map(roomQ), i:0, correct:0, coin0:coins, lock:false};
   $('rmQuizCard').style.display=''; $('rmDoneCard').style.display='none';
-  updateWallet(); paintRoom(); show('room'); renderRM();
+  updateWallet(); paintRoom(); show('room'); initRoomDrag(); setRoomEdit(false); renderRM();
 }
 function renderRM(){
   const q=rm.deck[rm.i]; rm.lock=false; showEcho('rmEcho',0);
@@ -2232,7 +2325,7 @@ function renderRM(){
   const box=$('rmOpts'); box.innerHTML=''; const K=['A','B','C','D'];
   q.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='opt';
     b.innerHTML=`<span class="k">${K[i]}</span>${esc(o.t)}`; b.onclick=()=>pickRM(b,o,q); box.appendChild(b); });
-  $('rmPick').style.display='none'; $('rmAnswer').classList.remove('show');
+  $('rmPick').style.display='none'; setPicking(0); setRoomEdit(false); $('rmAnswer').classList.remove('show');
 }
 function pickRM(btn,o,q){
   if(rm.lock)return; rm.lock=true;
@@ -2255,15 +2348,17 @@ function pickRM(btn,o,q){
   }
   $('rmNext').textContent=(rm.i+1>=RM_N)?'서재 완성 보기 🏁':'다음 ▶';
 }
+function setPicking(on){ const sc=$('room'); if(sc) sc.classList.toggle('picking',!!on);
+  if(on) requestAnimationFrame(()=>{ try{ (document.scrollingElement||document.documentElement).scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); } }); }
 function offerItems(){
   const avail=ROOM_ITEMS.filter(x=>!room.owned.includes(x.id) && (!x.need||room.owned.includes(x.need)));
-  if(!avail.length){ $('rmPick').style.display='none'; $('rmNext').style.display=''; return; }
+  if(!avail.length){ $('rmPick').style.display='none'; setPicking(0); $('rmNext').style.display=''; return; }
   const two=shuffle(avail).slice(0,2);
   const box=$('rmPickBtns'); box.innerHTML='';
   two.forEach(x=>{ const b=document.createElement('button'); b.className='rm-item';
     b.innerHTML=`<span class="e">${x.e}</span><span class="n">${x.n}</span>`;
     b.onclick=()=>chooseItem(x,b); box.appendChild(b); });
-  $('rmPick').style.display='block'; $('rmNext').style.display='none';
+  setRoomEdit(false); $('rmPick').style.display='block'; setPicking(1); $('rmNext').style.display='none';
 }
 function chooseItem(x,btn){
   room.owned.push(x.id); saveRoom(); paintRoom();
@@ -2553,9 +2648,11 @@ $('compoCheck').onclick=checkCompo; $('compoSkip').onclick=skipCompo; $('compoRe
 $('rpTabF').onclick=()=>{pickSex='f';renderCharGrid();ac();sfx.coin();};
 $('rpTabM').onclick=()=>{pickSex='m';renderCharGrid();ac();sfx.coin();};
 $('rpHome').onclick=goHome; $('rpStart').onclick=()=>{ room.char=pickChar||CHARS[0].id; saveRoom(); startRoom(); };
-$('rmHome').onclick=()=>{stopSpeak();goHome();}; $('rmNext').onclick=rmNextClick; $('rmAgain').onclick=startRoom;
+$('rmEditBtn').onclick=()=>setRoomEdit(!rmEdit);
+$('rmPosReset').onclick=resetRoomPos;
+$('rmHome').onclick=()=>{stopSpeak();setRoomEdit(false);goHome();}; $('rmNext').onclick=rmNextClick; $('rmAgain').onclick=startRoom;
 $('rmDoneHome').onclick=goHome; $('rmChangeChar').onclick=openCharPick;
-$('rmReset').onclick=()=>{ if(confirm('방을 처음부터 새로 꾸밀까요? (책과 아이템이 모두 사라져요)')){ room={char:room.char,owned:[],books:0}; saveRoom(); paintRoom(); startRoom(); } };
+$('rmReset').onclick=()=>{ if(confirm('방을 처음부터 새로 꾸밀까요? (책과 아이템이 모두 사라져요)')){ room={char:room.char,owned:[],books:0,pos:{}}; saveRoom(); paintRoom(); startRoom(); } };
 $('swHome').onclick=goHome; $('swYes').onclick=()=>pickSW(true); $('swNo').onclick=()=>pickSW(false);
 $('tsHome').onclick=goHome; $('tsStart').onclick=()=>{ startTime(); }; $('tsRank').onclick=showRankingOnly;
 $('homeRankMore').onclick=showRankingOnly; $('deleteMyRank').onclick=deleteMyRank;
