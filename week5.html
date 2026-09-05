@@ -432,7 +432,7 @@ body{font-family:'Jua','Gaegu',system-ui,sans-serif; color:var(--ink);
       <ol id="homeRankCoinList"></ol>
     </div>
     <div class="hr-morewrap" id="homeRankMoreWrap" style="display:none"><button class="hr-morebtn" id="homeRankMore">🏆 타임어택 전체 랭킹 보기</button></div>
-    <div class="footer">© 2026 Sophie English 쏘피잉글리쉬</div>
+    <div class="footer">© 2026 Sophie English 쏘피잉글리쉬 <span id="buildTag" style="opacity:.55"></span></div>
   </section>
 
   <!-- ============ QUEST / LISTEN (shared) ============ -->
@@ -2674,6 +2674,8 @@ async function deleteMyRank(){
   setTimeout(()=>openNickGate(),900);
 }
 /* ============ 닉네임 게이트 ============ */
+const BUILD='5j';
+(function(){const b=document.getElementById('buildTag'); if(b) b.textContent='· '+BUILD;})();
 function paintNickChip(){ const n=getNick(), c=$('nickChip'); if(!c)return;
   if(n){ c.style.display='inline-block'; c.textContent=n; }
   else c.style.display='none'; }
